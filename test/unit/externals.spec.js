@@ -9,7 +9,7 @@ describe("externals", () => {
         JSZip = jasmine.createSpyObj("JSZip", ["_"]);
         JSZip.external = { Promise: "PROMISE" };
 
-        externals = proxyquire("../../lib/externals", {
+        externals = proxyquire("../../dist/externals", {
             jszip: JSZip,
             '@noCallThru': true
         });

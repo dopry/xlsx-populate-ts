@@ -7,7 +7,7 @@ const glob = require("glob");
 const path = require("path");
 const edge = require('edge-js');
 
-const XlsxPopulate = require("../../lib/XlsxPopulate");
+const XlsxPopulate = require("../../dist/XlsxPopulate");
 
 let interopPath = glob.sync("C:\\Program Files\\Microsoft Office\\root\\Office*\\ADDINS\\**\\Microsoft.Office.Interop.Excel.dll")[0];
 if (!interopPath) {

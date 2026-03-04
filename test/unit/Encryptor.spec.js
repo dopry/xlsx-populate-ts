@@ -6,7 +6,7 @@ describe("Encryptor", () => {
     let Encryptor, XmlParser, XmlBuilder, encryptor;
 
     beforeEach(() => {
-        Encryptor = proxyquire("../../lib/Encryptor", {
+        Encryptor = proxyquire("../../dist/Encryptor", {
             '@noCallThru': true
         });
         encryptor = new Encryptor();

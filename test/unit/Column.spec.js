@@ -7,7 +7,7 @@ describe("Column", () => {
     let Column, column, columnNode, sheet, style, styleSheet, workbook, existingRows, verticalPageBreaks;
 
     beforeEach(() => {
-        Column = proxyquire("../../lib/Column", {
+        Column = proxyquire("../../dist/Column", {
             '@noCallThru': true
         });
 

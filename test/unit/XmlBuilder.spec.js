@@ -6,7 +6,7 @@ describe("XmlBuilder", () => {
     let XmlBuilder, xmlBuilder;
 
     beforeEach(() => {
-        XmlBuilder = proxyquire("../../lib/XmlBuilder", {
+        XmlBuilder = proxyquire("../../dist/XmlBuilder", {
             '@noCallThru': true
         });
         xmlBuilder = new XmlBuilder();

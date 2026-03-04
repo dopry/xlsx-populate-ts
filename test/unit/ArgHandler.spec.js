@@ -9,7 +9,7 @@ describe("ArgHandler", () => {
         Style = class {}
         if (!Style.name) Style.name = "Style";
 
-        ArgHandler = proxyquire("../../lib/ArgHandler", {
+        ArgHandler = proxyquire("../../dist/ArgHandler", {
             '@noCallThru': true
         });
 

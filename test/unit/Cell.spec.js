@@ -9,12 +9,12 @@ describe("Cell", () => {
         FormulaError = jasmine.createSpyObj("FormulaError", ["getError"]);
         FormulaError.getError.and.returnValue("ERROR");
 
-        Cell = proxyquire("../../lib/Cell", {
+        Cell = proxyquire("../../dist/Cell", {
             './FormulaError': FormulaError,
             '@noCallThru': true
         });
 
-        RichText = proxyquire("../../lib/RichText", {
+        RichText = proxyquire("../../dist/RichText", {
             '@noCallThru': true
         });
 

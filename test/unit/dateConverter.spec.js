@@ -6,7 +6,7 @@ describe("dateConverter", () => {
     let dateConverter;
 
     beforeEach(() => {
-        dateConverter = proxyquire("../../lib/dateConverter", {
+        dateConverter = proxyquire("../../dist/dateConverter", {
             '@noCallThru': true
         });
     });

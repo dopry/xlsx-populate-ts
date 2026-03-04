@@ -6,7 +6,7 @@ describe("addressConverter", () => {
     let addressConverter;
 
     beforeEach(() => {
-        addressConverter = proxyquire("../../lib/addressConverter", {
+        addressConverter = proxyquire("../../dist/addressConverter", {
             '@noCallThru': true
         });
     });

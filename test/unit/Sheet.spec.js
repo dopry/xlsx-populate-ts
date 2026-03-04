@@ -24,7 +24,7 @@ describe("Sheet", () => {
         Relationships.prototype.findById = jasmine.createSpy("Relationships.findById").and.callFake(id => ({ attributes: { Target: `TARGET:${id}` } }));
         Relationships.prototype.add = jasmine.createSpy("Relationships.add").and.returnValue({ attributes: { Id: "ID" } });
 
-        Sheet = proxyquire("../../lib/Sheet", {
+        Sheet = proxyquire("../../dist/Sheet", {
             './Range': Range,
             './Row': Row,
             './Column': Column,
@@ -424,7 +424,7 @@ describe("Sheet", () => {
         });
 
         it("should add a XML node", () => {
-            const Range = proxyquire("../../lib/Range", {
+            const Range = proxyquire("../../dist/Range", {
                 '@noCallThru': true
             });
             const startCell = jasmine.createSpyObj("startCell", ["rowNumber", "columnNumber", "columnName"]);

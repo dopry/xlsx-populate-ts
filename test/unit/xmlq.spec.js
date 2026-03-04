@@ -6,7 +6,7 @@ describe("xmlq", () => {
     let xmlq;
 
     beforeEach(() => {
-        xmlq = proxyquire("../../lib/xmlq", {
+        xmlq = proxyquire("../../dist/xmlq", {
             '@noCallThru': true
         });
     });

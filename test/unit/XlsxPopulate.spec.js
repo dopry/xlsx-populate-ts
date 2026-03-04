@@ -23,7 +23,7 @@ describe("XlsxPopulate", () => {
 
         FormulaError = () => {};
 
-        XlsxPopulate = proxyquire("../../lib/XlsxPopulate", {
+        XlsxPopulate = proxyquire("../../dist/XlsxPopulate", {
             './externals': externals,
             './dateConverter': dateConverter,
             './Workbook': Workbook,

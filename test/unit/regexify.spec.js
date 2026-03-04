@@ -6,7 +6,7 @@ describe("regexify", () => {
     let regexify;
 
     beforeEach(() => {
-        regexify = proxyquire("../../lib/regexify", {
+        regexify = proxyquire("../../dist/regexify", {
             '@noCallThru': true
         });
     });

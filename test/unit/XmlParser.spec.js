@@ -11,7 +11,7 @@ describe("XmlParser", () => {
         externals = jasmine.createSpyObj("externals", ["_"]);
         externals.Promise = Promise;
 
-        XmlParser = proxyquire("../../lib/XmlParser", {
+        XmlParser = proxyquire("../../dist/XmlParser", {
             './externals': externals,
             '@noCallThru': true
         });

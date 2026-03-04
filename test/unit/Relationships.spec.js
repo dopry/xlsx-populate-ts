@@ -6,7 +6,7 @@ describe("Relationships", () => {
     let Relationships, relationships, relationshipsNode;
 
     beforeEach(() => {
-        Relationships = proxyquire("../../lib/Relationships", {
+        Relationships = proxyquire("../../dist/Relationships", {
             '@noCallThru': true
         });
 

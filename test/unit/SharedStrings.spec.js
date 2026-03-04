@@ -6,7 +6,7 @@ describe("SharedStrings", () => {
     let SharedStrings, sharedStrings, sharedStringsNode;
 
     beforeEach(() => {
-        SharedStrings = proxyquire("../../lib/SharedStrings", {
+        SharedStrings = proxyquire("../../dist/SharedStrings", {
             '@noCallThru': true
         });
 

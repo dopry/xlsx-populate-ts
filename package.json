@@ -1,7 +1,7 @@
 {
-  "name": "xlsx-populate",
-  "version": "1.21.0",
-  "description": "Excel XLSX parser/generator written in JavaScript with Node.js and browser support, jQuery/d3-style method chaining, and a focus on keeping existing workbook features and styles in tact.",
+  "name": "@dopry/xlsx-populate-ts",
+  "version": "0.0.0-semantic-release",
+  "description": "Excel XLSX parser/generator written in TypeScript with Node.js and browser support, jQuery/d3-style method chaining, and a focus on keeping existing workbook features and styles in tact.",
   "keywords": [
     "excel",
     "workbook",
@@ -16,16 +16,23 @@
     "encryption",
     "password"
   ],
-  "main": "lib/XlsxPopulate.js",
+  "main": "dist/XlsxPopulate.js",
+  "types": "dist/XlsxPopulate.d.ts",
   "browser": {
     "XlsxPopulate": "./browser/xlsx-populate.js"
   },
+  "files": [
+    "dist/",
+    "lib/"
+  ],
   "scripts": {
+    "build": "tsc",
     "test": "jasmine JASMINE_CONFIG_PATH=test/unit/jasmine.json",
     "e2e-generate": "jasmine JASMINE_CONFIG_PATH=test/e2e-generate/jasmine.json",
     "e2e-parse": "jasmine JASMINE_CONFIG_PATH=test/e2e-parse/jasmine.json",
     "test:windows": "npm-run-all test e2e-parse e2e-generate",
-    "docs": "gulp docs"
+    "docs": "gulp docs",
+    "prepublishOnly": "npm run build"
   },
   "author": "Dave T. Johnson <dave@dtjohnson.net>",
   "contributors": [
@@ -41,12 +48,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dtjohnson/xlsx-populate.git"
+    "url": "https://github.com/dopry/xlsx-populate.git"
   },
-  "bugs": "https://github.com/dtjohnson/xlsx-populate/issues",
+  "bugs": "https://github.com/dopry/xlsx-populate/issues",
   "devDependencies": {
     "@babel/core": "^7.8.6",
     "@babel/preset-env": "^7.8.6",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.5",
+    "@types/lodash": "^4.17.24",
+    "@types/node": "^25.3.3",
+    "@types/sax": "^1.2.7",
     "babelify": "^10.0.0",
     "browserify": "^16.5.0",
     "edge-js": "^13.0.1",
@@ -72,6 +86,8 @@
     "proxyquire-universal": "^2.1.0",
     "proxyquireify": "^3.2.1",
     "replacestream": "^4.0.3",
+    "semantic-release": "^25.0.3",
+    "typescript": "^5.9.3",
     "uglify-js": "^3.8.0",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0",

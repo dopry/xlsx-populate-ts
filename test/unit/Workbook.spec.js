@@ -110,7 +110,7 @@ describe("Workbook", () => {
         externals = jasmine.createSpyObj("externals", ["_"]);
         externals.Promise = Promise;
 
-        Workbook = proxyquire("../../lib/Workbook", {
+        Workbook = proxyquire("../../dist/Workbook", {
             fs,
             jszip: JSZip,
             './externals': externals,

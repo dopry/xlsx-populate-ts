@@ -6,7 +6,7 @@ const fs = require("fs");
 const glob = require("glob");
 const path = require("path");
 
-const XlsxPopulate = require("../../lib/XlsxPopulate");
+const XlsxPopulate = require("../../dist/XlsxPopulate");
 
 // const testCases = ["./encrypted/"]; // To focus
 const testCases = glob.sync("./*/");

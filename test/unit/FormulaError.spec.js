@@ -6,7 +6,7 @@ describe("FormulaError", () => {
     let FormulaError;
 
     beforeEach(() => {
-        FormulaError = proxyquire("../../lib/FormulaError", {
+        FormulaError = proxyquire("../../dist/FormulaError", {
             '@noCallThru': true
         });
     });

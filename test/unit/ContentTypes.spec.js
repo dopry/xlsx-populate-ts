@@ -6,7 +6,7 @@ describe("ContentTypes", () => {
     let ContentTypes, contentTypes, contentTypesNode;
 
     beforeEach(() => {
-        ContentTypes = proxyquire("../../lib/ContentTypes", {
+        ContentTypes = proxyquire("../../dist/ContentTypes", {
             '@noCallThru': true
         });
 

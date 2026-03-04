@@ -7,7 +7,7 @@ describe("StyleSheet", () => {
 
     beforeEach(() => {
         Style = jasmine.createSpy("_Style");
-        StyleSheet = proxyquire("../../lib/StyleSheet", {
+        StyleSheet = proxyquire("../../dist/StyleSheet", {
             "./Style": Style,
             '@noCallThru': true
         });

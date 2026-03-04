@@ -1,5 +1,5 @@
 "use strict";
-const RichText = require("../../../lib/XlsxPopulate").RichText;
+const RichText = require("../../../dist/XlsxPopulate").RichText;
 
 module.exports = workbook => {
     const sheet = workbook.sheet(0);

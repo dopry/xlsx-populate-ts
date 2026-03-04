@@ -6,7 +6,7 @@ describe("CoreProperties", () => {
     let CoreProperties, coreProperties, corePropertiesNode;
 
     beforeEach(() => {
-        CoreProperties = proxyquire("../../lib/CoreProperties", {
+        CoreProperties = proxyquire("../../dist/CoreProperties", {
             '@noCallThru': true
         });
 
