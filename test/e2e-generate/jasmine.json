@@ -1,9 +1,0 @@
-{
-  "spec_dir": "test/e2e-generate",
-  "spec_files": [
-    "**/*[sS]pec.js"
-  ],
-  "helpers": [
-    "../helpers/**/*.js"
-  ]
-}

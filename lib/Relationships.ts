@@ -1,6 +1,6 @@
 "use strict";
 
-import _ = require("lodash");
+import _ from "lodash"
 
 const RELATIONSHIP_SCHEMA_PREFIX = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
 

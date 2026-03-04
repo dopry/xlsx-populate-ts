@@ -1,17 +1,17 @@
 "use strict";
 
-import _ = require("lodash");
-import Cell = require("./Cell");
-import Row = require("./Row");
-import Column = require("./Column");
-import Range = require("./Range");
-import Relationships = require("./Relationships");
-import xmlq = require("./xmlq");
-import regexify = require("./regexify");
-import addressConverter = require("./addressConverter");
-import ArgHandler = require("./ArgHandler");
-import colorIndexes = require("./colorIndexes");
-import PageBreaks = require("./PageBreaks");
+import _ from "lodash"
+import Cell from "./Cell"
+import Row from "./Row"
+import Column from "./Column"
+import Range from "./Range"
+import Relationships from "./Relationships"
+import xmlq from "./xmlq"
+import regexify from "./regexify"
+import addressConverter from "./addressConverter"
+import ArgHandler from "./ArgHandler"
+import colorIndexes from "./colorIndexes"
+import PageBreaks from "./PageBreaks"
 
 // Order of the nodes as defined by the spec.
 const nodeOrder = [

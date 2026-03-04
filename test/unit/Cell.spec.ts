@@ -1,60 +1,55 @@
-"use strict";
+import { describe, it, beforeEach, expect, vi } from 'vitest';
+import { createSpyObj } from '../helpers/spyObj';
 
-const proxyquire = require("proxyquire");
+const MockFormulaError = vi.hoisted(() => ({
+    getError: vi.fn().mockReturnValue("ERROR"),
+}));
+vi.mock('../../lib/FormulaError', () => ({ default: MockFormulaError }));
+
+import Cell from '../../lib/Cell';
+import RichText from '../../lib/RichText';
 
 describe("Cell", () => {
-    let Cell, cell, cellNode, RichText, row, sheet, workbook, sharedStrings, styleSheet, style, FormulaError, range;
+    let cell: any, cellNode: any, row: any, sheet: any, workbook: any;
+    let sharedStrings: any, styleSheet: any, style: any, range: any;
 
     beforeEach(() => {
-        FormulaError = jasmine.createSpyObj("FormulaError", ["getError"]);
-        FormulaError.getError.and.returnValue("ERROR");
+        MockFormulaError.getError.mockReturnValue("ERROR");
 
-        Cell = proxyquire("../../dist/Cell", {
-            './FormulaError': FormulaError,
-            '@noCallThru': true
-        });
-
-        RichText = proxyquire("../../dist/RichText", {
-            '@noCallThru': true
-        });
-
-        const Style = class {};
-        if (!Style.name) Style.name = "Style";
-        Style.prototype.id = jasmine.createSpy("Style.id").and.returnValue(4);
-        Style.prototype.style = jasmine.createSpy("Style.style").and.callFake(name => `STYLE:${name}`);
+        const Style = class {} as any;
+        Style.prototype.id = vi.fn().mockReturnValue(4);
+        Style.prototype.style = vi.fn().mockImplementation((name: string) => `STYLE:${name}`);
         style = new Style();
 
-        styleSheet = jasmine.createSpyObj("styleSheet", ["createStyle"]);
-        styleSheet.createStyle.and.returnValue(style);
+        styleSheet = createSpyObj("styleSheet", ["createStyle"]);
+        styleSheet.createStyle.mockReturnValue(style);
 
-        sharedStrings = jasmine.createSpyObj("sharedStrings", ['getIndexForString', 'getStringByIndex']);
-        sharedStrings.getIndexForString.and.returnValue(7);
-        sharedStrings.getStringByIndex.and.returnValue("STRING");
+        sharedStrings = createSpyObj("sharedStrings", ['getIndexForString', 'getStringByIndex']);
+        sharedStrings.getIndexForString.mockReturnValue(7);
+        sharedStrings.getStringByIndex.mockReturnValue("STRING");
 
-        workbook = jasmine.createSpyObj("workbook", ["sharedStrings", "styleSheet"]);
-        workbook.sharedStrings.and.returnValue(sharedStrings);
-        workbook.styleSheet.and.returnValue(styleSheet);
+        workbook = createSpyObj("workbook", ["sharedStrings", "styleSheet"]);
+        workbook.sharedStrings.mockReturnValue(sharedStrings);
+        workbook.styleSheet.mockReturnValue(styleSheet);
 
-        range = jasmine.createSpyObj('range', ['value', 'style']);
+        range = createSpyObj('range', ['value', 'style']);
 
-        sheet = jasmine.createSpyObj('sheet', ['createStyle', 'activeCell', 'updateMaxSharedFormulaId', 'name', 'column', 'clearCellsUsingSharedFormula', 'cell', 'range', 'hyperlink', 'dataValidation', 'verticalPageBreaks']);
-        sheet.activeCell.and.returnValue("ACTIVE CELL");
-        sheet.name.and.returnValue("NAME");
-        sheet.column.and.returnValue("COLUMN");
-        sheet.hyperlink.and.returnValue("HYPERLINK");
-        sheet.range.and.returnValue(range);
-        sheet.dataValidation.and.returnValue("DATAVALIDATION");
+        sheet = createSpyObj('sheet', ['createStyle', 'activeCell', 'updateMaxSharedFormulaId', 'name', 'column', 'clearCellsUsingSharedFormula', 'cell', 'range', 'hyperlink', 'dataValidation', 'verticalPageBreaks']);
+        sheet.activeCell.mockReturnValue("ACTIVE CELL");
+        sheet.name.mockReturnValue("NAME");
+        sheet.column.mockReturnValue("COLUMN");
+        sheet.hyperlink.mockReturnValue("HYPERLINK");
+        sheet.range.mockReturnValue(range);
+        sheet.dataValidation.mockReturnValue("DATAVALIDATION");
 
-        row = jasmine.createSpyObj('row', ['sheet', 'workbook', 'rowNumber', 'addPageBreak']);
-        row.sheet.and.returnValue(sheet);
-        row.workbook.and.returnValue(workbook);
-        row.rowNumber.and.returnValue(7);
+        row = createSpyObj('row', ['sheet', 'workbook', 'rowNumber', 'addPageBreak']);
+        row.sheet.mockReturnValue(sheet);
+        row.workbook.mockReturnValue(workbook);
+        row.rowNumber.mockReturnValue(7);
 
         cellNode = {
             name: 'c',
-            attributes: {
-                r: "C7"
-            },
+            attributes: { r: "C7" },
             children: []
         };
 
@@ -66,7 +61,7 @@ describe("Cell", () => {
     describe("active", () => {
         it("should return true/false", () => {
             expect(cell.active()).toBe(false);
-            sheet.activeCell.and.returnValue(cell);
+            sheet.activeCell.mockReturnValue(cell);
             expect(cell.active()).toBe(true);
         });
 
@@ -82,8 +77,8 @@ describe("Cell", () => {
 
     describe("address", () => {
         it("should return the address", () => {
-            spyOn(cell, "rowNumber").and.returnValue(7);
-            spyOn(cell, "columnNumber").and.returnValue(3);
+            vi.spyOn(cell, "rowNumber").mockReturnValue(7);
+            vi.spyOn(cell, "columnNumber").mockReturnValue(3);
 
             expect(cell.address()).toBe('C7');
             expect(cell.address({ rowAnchored: true })).toBe('C$7');
@@ -139,7 +134,7 @@ describe("Cell", () => {
 
     describe("columnName", () => {
         it("should return the column name", () => {
-            spyOn(cell, "columnNumber").and.returnValue(3);
+            vi.spyOn(cell, "columnNumber").mockReturnValue(3);
             expect(cell.columnName()).toBe("C");
         });
     });
@@ -219,8 +214,9 @@ describe("Cell", () => {
             expect(sheet.dataValidation).toHaveBeenCalledWith('C7', 'testing, testing2');
         });
 
-        it('should return the cell', () => {
-            expect(cell.dataValidation({ type: 'list',
+        it('should return the cell with object arg', () => {
+            const dv = {
+                type: 'list',
                 allowBlank: false,
                 showInputMessage: false,
                 prompt: '',
@@ -231,20 +227,9 @@ describe("Cell", () => {
                 operator: '',
                 formula1: 'test1, test2, test3',
                 formula2: ''
-            })).toBe(cell);
-
-            expect(sheet.dataValidation).toHaveBeenCalledWith('C7', { type: 'list',
-                allowBlank: false,
-                showInputMessage: false,
-                prompt: '',
-                promptTitle: '',
-                showErrorMessage: false,
-                error: '',
-                errorTitle: '',
-                operator: '',
-                formula1: 'test1, test2, test3',
-                formula2: ''
-            });
+            };
+            expect(cell.dataValidation(dv)).toBe(cell);
+            expect(sheet.dataValidation).toHaveBeenCalledWith('C7', dv);
         });
 
         it("should get the dataValidation from the cell", () => {
@@ -255,53 +240,53 @@ describe("Cell", () => {
 
     describe("find", () => {
         beforeEach(() => {
-            spyOn(cell, 'value');
+            vi.spyOn(cell, 'value');
         });
 
         it("should return true if substring found and false otherwise", () => {
-            cell.value.and.returnValue("Foo bar baz");
+            (cell.value as any).mockReturnValue("Foo bar baz");
             expect(cell.find('bar')).toBe(true);
             expect(cell.find('BAR')).toBe(true);
             expect(cell.find('goo')).toBe(false);
-            expect(cell.value).not.toHaveBeenCalledWith(jasmine.anything());
+            expect(cell.value).not.toHaveBeenCalledWith(expect.anything());
         });
 
         it("should return true if regex matches and false otherwise", () => {
-            cell.value.and.returnValue("Foo bar baz");
+            (cell.value as any).mockReturnValue("Foo bar baz");
             expect(cell.find(/\w{3}/)).toBe(true);
             expect(cell.find(/\w{4}/)).toBe(false);
             expect(cell.find(/Foo/)).toBe(true);
-            expect(cell.value).not.toHaveBeenCalledWith(jasmine.anything());
+            expect(cell.value).not.toHaveBeenCalledWith(expect.anything());
         });
 
         it("should not replace if replacement is nil", () => {
-            cell.value.and.returnValue("Foo bar baz");
+            (cell.value as any).mockReturnValue("Foo bar baz");
             expect(cell.find("foo", undefined)).toBe(true);
-            expect(cell.value).not.toHaveBeenCalledWith(jasmine.anything());
+            expect(cell.value).not.toHaveBeenCalledWith(expect.anything());
             expect(cell.find("bar", null)).toBe(true);
-            expect(cell.value).not.toHaveBeenCalledWith(jasmine.anything());
+            expect(cell.value).not.toHaveBeenCalledWith(expect.anything());
         });
 
         it("should replace all occurences of substring", () => {
-            cell.value.and.returnValue("Foo bar baz foo");
+            (cell.value as any).mockReturnValue("Foo bar baz foo");
             expect(cell.find('foo', 'XXX')).toBe(true);
             expect(cell.value).toHaveBeenCalledWith('XXX bar baz XXX');
-            cell.value.calls.reset();
+            vi.mocked(cell.value).mockClear();
 
-            cell.value.and.returnValue("Foo bar baz foo");
+            (cell.value as any).mockReturnValue("Foo bar baz foo");
             expect(cell.find('foot', 'XXX')).toBe(false);
-            expect(cell.value).not.toHaveBeenCalledWith(jasmine.any(String));
+            expect(cell.value).not.toHaveBeenCalledWith(expect.any(String));
         });
 
         it("should replace regex matches", () => {
-            cell.value.and.returnValue("Foo bar baz foo");
+            (cell.value as any).mockReturnValue("Foo bar baz foo");
             expect(cell.find(/[a-z]{3}/, 'XXX')).toBe(true);
             expect(cell.value).toHaveBeenCalledWith('Foo XXX baz foo');
         });
 
-        it("should replace regex matches", () => {
-            cell.value.and.returnValue("Foo bar baz foo");
-            const replacer = jasmine.createSpy('replacer').and.returnValue("REPLACEMENT");
+        it("should replace regex matches with function", () => {
+            (cell.value as any).mockReturnValue("Foo bar baz foo");
+            const replacer = vi.fn().mockReturnValue("REPLACEMENT");
             expect(cell.find(/(\w)(o{2})/g, replacer)).toBe(true);
             expect(cell.value).toHaveBeenCalledWith('REPLACEMENT bar baz REPLACEMENT');
             expect(replacer).toHaveBeenCalledWith('Foo', 'F', 'oo', 0, 'Foo bar baz foo');
@@ -311,7 +296,7 @@ describe("Cell", () => {
 
     describe("tap", () => {
         it("should call the callback and return the cell", () => {
-            const callback = jasmine.createSpy('callback').and.returnValue("RETURN");
+            const callback = vi.fn().mockReturnValue("RETURN");
             expect(cell.tap(callback)).toBe(cell);
             expect(callback).toHaveBeenCalledWith(cell);
         });
@@ -319,7 +304,7 @@ describe("Cell", () => {
 
     describe("thru", () => {
         it("should call the callback and return the callback return value", () => {
-            const callback = jasmine.createSpy('callback').and.returnValue("RETURN");
+            const callback = vi.fn().mockReturnValue("RETURN");
             expect(cell.thru(callback)).toBe("RETURN");
             expect(callback).toHaveBeenCalledWith(cell);
         });
@@ -334,19 +319,19 @@ describe("Cell", () => {
 
     describe("relativeCell", () => {
         it("should call sheet.cell with the appropriate row/column", () => {
-            sheet.cell.and.returnValue("CELL");
+            sheet.cell.mockReturnValue("CELL");
 
             expect(cell.relativeCell(0, 0)).toBe("CELL");
             expect(sheet.cell).toHaveBeenCalledWith(7, 3);
-            sheet.cell.calls.reset();
+            sheet.cell.mockClear();
 
             expect(cell.relativeCell(-2, -1)).toBe("CELL");
             expect(sheet.cell).toHaveBeenCalledWith(5, 2);
-            sheet.cell.calls.reset();
+            sheet.cell.mockClear();
 
             expect(cell.relativeCell(5, 2)).toBe("CELL");
             expect(sheet.cell).toHaveBeenCalledWith(12, 5);
-            sheet.cell.calls.reset();
+            sheet.cell.mockClear();
         });
     });
 
@@ -396,7 +381,7 @@ describe("Cell", () => {
         });
 
         it("should get multiple styles", () => {
-            expect(cell.style(["foo", "bar", "baz"])).toEqualJson({
+            expect(cell.style(["foo", "bar", "baz"])).toEqual({
                 foo: "STYLE:foo", bar: "STYLE:bar", baz: "STYLE:baz"
             });
             expect(style.style).toHaveBeenCalledWith("foo");
@@ -410,16 +395,14 @@ describe("Cell", () => {
         });
 
         it("should set the values in the range", () => {
-            spyOn(cell, "relativeCell");
+            vi.spyOn(cell, "relativeCell");
             cell.style("foo", [[1, 2], [3, 4], [5, 6]]);
             expect(cell.relativeCell).toHaveBeenCalledWith(2, 1);
             expect(range.style).toHaveBeenCalledWith("foo", [[1, 2], [3, 4], [5, 6]]);
         });
 
         it("should set multiple styles", () => {
-            expect(cell.style({
-                foo: "FOO", bar: "BAR", baz: "BAZ"
-            })).toBe(cell);
+            expect(cell.style({ foo: "FOO", bar: "BAR", baz: "BAZ" })).toBe(cell);
             expect(style.style).toHaveBeenCalledWith("foo", "FOO");
             expect(style.style).toHaveBeenCalledWith("bar", "BAR");
             expect(style.style).toHaveBeenCalledWith("baz", "BAZ");
@@ -428,7 +411,7 @@ describe("Cell", () => {
 
     describe("value", () => {
         beforeEach(() => {
-            spyOn(cell, "clear");
+            vi.spyOn(cell, "clear");
         });
 
         it("should get the value", () => {
@@ -451,7 +434,7 @@ describe("Cell", () => {
         });
 
         it("should set the values in the range", () => {
-            spyOn(cell, "relativeCell");
+            vi.spyOn(cell, "relativeCell");
             cell.value([[1, 2], [3, 4]]);
             expect(cell.relativeCell).toHaveBeenCalledWith(1, 1);
             expect(range.value).toHaveBeenCalledWith([[1, 2], [3, 4]]);
@@ -463,7 +446,7 @@ describe("Cell", () => {
             expect(cell.workbook()).toBe(workbook);
         });
     });
-    
+
     describe('addHorizontalPageBreak', () => {
         it("should add a rowBreak and return the cell", () => {
             expect(cell.addHorizontalPageBreak()).toBe(cell);
@@ -510,7 +493,7 @@ describe("Cell", () => {
 
     describe("setSharedFormula", () => {
         it("should set a shared formula", () => {
-            spyOn(cell, "clear");
+            vi.spyOn(cell, "clear");
             cell.setSharedFormula(3, "A1*A2", "A1:C1");
             expect(cell.clear).toHaveBeenCalledWith();
             expect(cell._formulaType).toBe("shared");
@@ -535,13 +518,9 @@ describe("Cell", () => {
             cell._formulaRef = "REF";
             cell._sharedFormulaId = "SHARED_ID";
 
-            expect(cell.toXml().children).toEqualJson([{
+            expect(cell.toXml().children).toEqual([{
                 name: 'f',
-                attributes: {
-                    t: 'TYPE',
-                    ref: 'REF',
-                    si: 'SHARED_ID'
-                },
+                attributes: { t: 'TYPE', ref: 'REF', si: 'SHARED_ID' },
                 children: ['FORMULA']
             }]);
         });
@@ -551,11 +530,9 @@ describe("Cell", () => {
             cell._formula = "FORMULA";
             cell._remainingFormulaAttributes = { foo: 'foo' };
 
-            expect(cell.toXml().children).toEqualJson([{
+            expect(cell.toXml().children).toEqual([{
                 name: 'f',
-                attributes: {
-                    foo: 'foo'
-                },
+                attributes: { foo: 'foo' },
                 children: ['FORMULA']
             }]);
         });
@@ -564,27 +541,19 @@ describe("Cell", () => {
             cell._formulaType = "TYPE";
             cell._value = "VALUE";
 
-            expect(cell.toXml().children).toEqualJson([{
+            expect(cell.toXml().children).toEqual([{
                 name: 'f',
-                attributes: {
-                    t: 'TYPE'
-                }
+                attributes: { t: 'TYPE' }
             }]);
         });
 
         it("should set a string value", () => {
             cell._value = "STRING";
 
-            expect(cell.toXml()).toEqualJson({
+            expect(cell.toXml()).toEqual({
                 name: 'c',
-                attributes: {
-                    r: "C7",
-                    t: 's'
-                },
-                children: [{
-                    name: 'v',
-                    children: [7]
-                }]
+                attributes: { r: "C7", t: 's' },
+                children: [{ name: 'v', children: [7] }]
             });
             expect(sharedStrings.getIndexForString).toHaveBeenCalledWith('STRING');
         });
@@ -593,16 +562,10 @@ describe("Cell", () => {
             const rt = new RichText();
             cell._value = rt;
 
-            expect(cell.toXml()).toEqualJson({
+            expect(cell.toXml()).toEqual({
                 name: 'c',
-                attributes: {
-                    r: "C7",
-                    t: 's'
-                },
-                children: [{
-                    name: 'v',
-                    children: [7]
-                }]
+                attributes: { r: "C7", t: 's' },
+                children: [{ name: 'v', children: [7] }]
             });
             expect(sharedStrings.getIndexForString).toHaveBeenCalledWith(rt.toXml());
         });
@@ -610,62 +573,40 @@ describe("Cell", () => {
         it("should set a true bool value", () => {
             cell._value = true;
 
-            expect(cell.toXml()).toEqualJson({
+            expect(cell.toXml()).toEqual({
                 name: 'c',
-                attributes: {
-                    r: "C7",
-                    t: 'b'
-                },
-                children: [{
-                    name: 'v',
-                    children: [1]
-                }]
+                attributes: { r: "C7", t: 'b' },
+                children: [{ name: 'v', children: [1] }]
             });
         });
 
         it("should set a false bool value", () => {
             cell._value = false;
 
-            expect(cell.toXml()).toEqualJson({
+            expect(cell.toXml()).toEqual({
                 name: 'c',
-                attributes: {
-                    r: "C7",
-                    t: 'b'
-                },
-                children: [{
-                    name: 'v',
-                    children: [0]
-                }]
+                attributes: { r: "C7", t: 'b' },
+                children: [{ name: 'v', children: [0] }]
             });
         });
 
         it("should set a number value", () => {
             cell._value = -6.89;
 
-            expect(cell.toXml()).toEqualJson({
+            expect(cell.toXml()).toEqual({
                 name: 'c',
-                attributes: {
-                    r: "C7"
-                },
-                children: [{
-                    name: 'v',
-                    children: [-6.89]
-                }]
+                attributes: { r: "C7" },
+                children: [{ name: 'v', children: [-6.89] }]
             });
         });
 
         it("should set a date value", () => {
             cell._value = new Date(2017, 0, 1);
 
-            expect(cell.toXml()).toEqualJson({
+            expect(cell.toXml()).toEqual({
                 name: 'c',
-                attributes: {
-                    r: "C7"
-                },
-                children: [{
-                    name: 'v',
-                    children: [42736]
-                }]
+                attributes: { r: "C7" },
+                children: [{ name: 'v', children: [42736] }]
             });
         });
 
@@ -680,11 +621,9 @@ describe("Cell", () => {
         });
 
         it("should handle an empty cell", () => {
-            expect(cell.toXml()).toEqualJson({
+            expect(cell.toXml()).toEqual({
                 name: 'c',
-                attributes: {
-                    r: "C7"
-                },
+                attributes: { r: "C7" },
                 children: []
             });
         });
@@ -694,17 +633,14 @@ describe("Cell", () => {
             cell._remainingAttributes = { foo: 'foo', bar: 'bar' };
             cell._remainingChildren = [{ name: 'foo' }, { name: 'bar' }];
 
-            expect(cell.toXml()).toEqualJson({
+            expect(cell.toXml()).toEqual({
                 name: 'c',
-                attributes: {
-                    r: "C7",
-                    foo: 'foo',
-                    bar: 'bar'
-                },
-                children: [{
-                    name: 'v',
-                    children: [-6.89]
-                }, { name: 'foo' }, { name: 'bar' }]
+                attributes: { r: "C7", foo: 'foo', bar: 'bar' },
+                children: [
+                    { name: 'v', children: [-6.89] },
+                    { name: 'foo' },
+                    { name: 'bar' }
+                ]
             });
         });
     });
@@ -715,7 +651,7 @@ describe("Cell", () => {
         beforeEach(() => {
             cell.clear();
             delete cell._columnNumber;
-            spyOn(cell, "_parseNode");
+            vi.spyOn(cell, "_parseNode").mockImplementation(() => {});
         });
 
         it("should parse the node", () => {
@@ -734,18 +670,13 @@ describe("Cell", () => {
     });
 
     describe("_parseNode", () => {
-        let node;
+        let node: any;
 
         beforeEach(() => {
-            node = {
-                attributes: {
-                    r: "D8"
-                }
-            };
-
+            node = { attributes: { r: "D8" } };
             cell.clear();
             delete cell._columnNumber;
-            sheet.updateMaxSharedFormulaId.calls.reset();
+            sheet.updateMaxSharedFormulaId.mockClear();
         });
 
         it("should parse the column number", () => {
@@ -778,11 +709,7 @@ describe("Cell", () => {
         it("should parse a shared formula", () => {
             node.children = [{
                 name: 'f',
-                attributes: {
-                    t: "shared",
-                    ref: "REF",
-                    si: "SHARED_INDEX"
-                },
+                attributes: { t: "shared", ref: "REF", si: "SHARED_INDEX" },
                 children: ["FORMULA"]
             }];
 
@@ -798,11 +725,7 @@ describe("Cell", () => {
         it("should preserve unknown formula attributes", () => {
             node.children = [{
                 name: 'f',
-                attributes: {
-                    t: "TYPE",
-                    foo: "foo",
-                    bar: "bar"
-                },
+                attributes: { t: "TYPE", foo: "foo", bar: "bar" },
                 children: []
             }];
 
@@ -811,19 +734,13 @@ describe("Cell", () => {
             expect(cell._formula).toBeUndefined();
             expect(cell._formulaRef).toBeUndefined();
             expect(cell._sharedFormulaId).toBeUndefined();
-            expect(cell._remainingFormulaAttributes).toEqualJson({
-                foo: "foo",
-                bar: "bar"
-            });
+            expect(cell._remainingFormulaAttributes).toEqual({ foo: "foo", bar: "bar" });
             expect(sheet.updateMaxSharedFormulaId).not.toHaveBeenCalled();
         });
 
         it("should parse string values", () => {
             node.attributes.t = "s";
-            node.children = [{
-                name: 'v',
-                children: [5]
-            }];
+            node.children = [{ name: 'v', children: [5] }];
 
             cell._parseNode(node);
             expect(cell._value).toBe("STRING");
@@ -840,10 +757,7 @@ describe("Cell", () => {
 
         it("should parse simple string values", () => {
             node.attributes.t = "str";
-            node.children = [{
-                name: 'v',
-                children: ['SIMPLE STRING']
-            }];
+            node.children = [{ name: 'v', children: ['SIMPLE STRING'] }];
 
             cell._parseNode(node);
             expect(cell._value).toBe("SIMPLE STRING");
@@ -853,10 +767,7 @@ describe("Cell", () => {
             node.attributes.t = "inlineStr";
             node.children = [{
                 name: 'is',
-                children: [{
-                    name: 't',
-                    children: ["INLINE_STRING"]
-                }]
+                children: [{ name: 't', children: ["INLINE_STRING"] }]
             }];
 
             cell._parseNode(node);
@@ -869,29 +780,20 @@ describe("Cell", () => {
                 name: 'is',
                 children: [{
                     name: 'r',
-                    children: [{
-                        name: 't',
-                        children: "FOO"
-                    }]
+                    children: [{ name: 't', children: "FOO" }]
                 }]
             }];
 
             cell._parseNode(node);
-            expect(cell._value).toEqualJson([{
+            expect(cell._value).toEqual([{
                 name: 'r',
-                children: [{
-                    name: 't',
-                    children: "FOO"
-                }]
+                children: [{ name: 't', children: "FOO" }]
             }]);
         });
 
         it("should parse true values", () => {
             node.attributes.t = "b";
-            node.children = [{
-                name: 'v',
-                children: [1]
-            }];
+            node.children = [{ name: 'v', children: [1] }];
 
             cell._parseNode(node);
             expect(cell._value).toBe(true);
@@ -899,10 +801,7 @@ describe("Cell", () => {
 
         it("should parse false values", () => {
             node.attributes.t = "b";
-            node.children = [{
-                name: 'v',
-                children: [0]
-            }];
+            node.children = [{ name: 'v', children: [0] }];
 
             cell._parseNode(node);
             expect(cell._value).toBe(false);
@@ -910,21 +809,15 @@ describe("Cell", () => {
 
         it("should parse error values", () => {
             node.attributes.t = "e";
-            node.children = [{
-                name: 'v',
-                children: ["#ERR"]
-            }];
+            node.children = [{ name: 'v', children: ["#ERR"] }];
 
             cell._parseNode(node);
             expect(cell._value).toBe("ERROR");
-            expect(FormulaError.getError).toHaveBeenCalledWith("#ERR");
+            expect(MockFormulaError.getError).toHaveBeenCalledWith("#ERR");
         });
 
         it("should parse number values", () => {
-            node.children = [{
-                name: 'v',
-                children: [-1.67]
-            }];
+            node.children = [{ name: 'v', children: [-1.67] }];
 
             cell._parseNode(node);
             expect(cell._value).toBe(-1.67);
@@ -940,25 +833,16 @@ describe("Cell", () => {
         it("should preserve unknown attributes and children", () => {
             node.attributes.foo = "foo";
             node.attributes.bar = "bar";
-            node.children = [{
-                name: 'v',
-                children: [0]
-            }, {
-                name: 'foo'
-            }, {
-                name: 'bar'
-            }];
+            node.children = [
+                { name: 'v', children: [0] },
+                { name: 'foo' },
+                { name: 'bar' }
+            ];
 
             cell._parseNode(node);
             expect(cell._value).toBe(0);
-            expect(cell._remainingAttributes).toEqualJson({
-                foo: "foo",
-                bar: "bar"
-            });
-            expect(cell._remainingChildren).toEqualJson([
-                { name: 'foo' },
-                { name: 'bar' }
-            ]);
+            expect(cell._remainingAttributes).toEqual({ foo: "foo", bar: "bar" });
+            expect(cell._remainingChildren).toEqual([{ name: 'foo' }, { name: 'bar' }]);
         });
     });
 });

@@ -1,40 +1,37 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import Range from '../../lib/Range';
+import { createSpyObj } from '../helpers/spyObj';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 
 describe("Range", () => {
-    let Range, range, startCell, endCell, sheet, style;
+    let range: any, startCell: any, endCell: any, sheet: any, style: any;
 
     beforeEach(() => {
-        Range = proxyquire("../../dist/Range", {
-            '@noCallThru': true
-        });
-
-        const Style = class {}
+        const Style = class {} as any;
         if (!Style.name) Style.name = "Style";
-        Style.prototype.style = jasmine.createSpy("Style.style").and.callFake(name => `STYLE:${name}`);
+        Style.prototype.style = vi.fn().mockImplementation((name: string) => `STYLE:${name}`);
         style = new Style();
 
-        sheet = jasmine.createSpyObj('sheet', ['name', 'workbook', 'cell', 'merged', 'incrementMaxSharedFormulaId', 'dataValidation', 'autoFilter']);
-        sheet.name.and.returnValue('NAME');
-        sheet.cell.and.callFake((row, column) => `CELL[${row}, ${column}]`);
-        sheet.workbook.and.returnValue('WORKBOOK');
-        sheet.dataValidation.and.returnValue('DATAVALIDATION');
+        sheet = createSpyObj('sheet', ['name', 'workbook', 'cell', 'merged', 'incrementMaxSharedFormulaId', 'dataValidation', 'autoFilter']);
+        sheet.name.mockReturnValue('NAME');
+        sheet.cell.mockImplementation((row: number, column: number) => `CELL[${row}, ${column}]`);
+        sheet.workbook.mockReturnValue('WORKBOOK');
+        sheet.dataValidation.mockReturnValue('DATAVALIDATION');
 
-        startCell = jasmine.createSpyObj("startCell", ["rowNumber", "columnNumber", "columnName", "sheet", "value"]);
-        startCell.columnName.and.returnValue("B");
-        startCell.columnNumber.and.returnValue(2);
-        startCell.rowNumber.and.returnValue(3);
-        startCell.sheet.and.returnValue(sheet);
+        startCell = createSpyObj("startCell", ["rowNumber", "columnNumber", "columnName", "sheet", "value"]);
+        startCell.columnName.mockReturnValue("B");
+        startCell.columnNumber.mockReturnValue(2);
+        startCell.rowNumber.mockReturnValue(3);
+        startCell.sheet.mockReturnValue(sheet);
 
-        endCell = jasmine.createSpyObj("endCell", ["rowNumber", "columnNumber", "columnName", "sheet", "value"]);
-        endCell.columnName.and.returnValue("C");
-        endCell.columnNumber.and.returnValue(3);
-        endCell.rowNumber.and.returnValue(5);
-        endCell.sheet.and.returnValue(sheet);
+        endCell = createSpyObj("endCell", ["rowNumber", "columnNumber", "columnName", "sheet", "value"]);
+        endCell.columnName.mockReturnValue("C");
+        endCell.columnNumber.mockReturnValue(3);
+        endCell.rowNumber.mockReturnValue(5);
+        endCell.sheet.mockReturnValue(sheet);
 
         range = new Range(startCell, endCell);
     });
+
     describe("address", () => {
         it("should return the address", () => {
             expect(range.address()).toBe('B3:C5');
@@ -69,7 +66,7 @@ describe("Range", () => {
 
     describe("cells", () => {
         it("should get the cells", () => {
-            expect(range.cells()).toEqualJson([
+            expect(range.cells()).toEqual([
                 ["CELL[3, 2]", "CELL[3, 3]"],
                 ["CELL[4, 2]", "CELL[4, 3]"],
                 ["CELL[5, 2]", "CELL[5, 3]"]
@@ -85,7 +82,7 @@ describe("Range", () => {
 
     describe("clear", () => {
         it("should clear the cell", () => {
-            spyOn(range, "value").and.returnValue("RETURN");
+            vi.spyOn(range, "value").mockReturnValue("RETURN");
             expect(range.clear()).toBe("RETURN");
             expect(range.value).toHaveBeenCalledWith(undefined);
         });
@@ -99,32 +96,32 @@ describe("Range", () => {
 
     describe("forEach", () => {
         it("should call the callback for each cell", () => {
-            const callback = jasmine.createSpy("callback");
+            const callback = vi.fn();
             expect(range.forEach(callback)).toBe(range);
-            expect(callback.calls.argsFor(0)).toEqualJson(["CELL[3, 2]", 0, 0, range]);
-            expect(callback.calls.argsFor(1)).toEqualJson(["CELL[3, 3]", 0, 1, range]);
-            expect(callback.calls.argsFor(2)).toEqualJson(["CELL[4, 2]", 1, 0, range]);
-            expect(callback.calls.argsFor(3)).toEqualJson(["CELL[4, 3]", 1, 1, range]);
-            expect(callback.calls.argsFor(4)).toEqualJson(["CELL[5, 2]", 2, 0, range]);
-            expect(callback.calls.argsFor(5)).toEqualJson(["CELL[5, 3]", 2, 1, range]);
+            expect(callback.mock.calls[0]).toEqual(["CELL[3, 2]", 0, 0, range]);
+            expect(callback.mock.calls[1]).toEqual(["CELL[3, 3]", 0, 1, range]);
+            expect(callback.mock.calls[2]).toEqual(["CELL[4, 2]", 1, 0, range]);
+            expect(callback.mock.calls[3]).toEqual(["CELL[4, 3]", 1, 1, range]);
+            expect(callback.mock.calls[4]).toEqual(["CELL[5, 2]", 2, 0, range]);
+            expect(callback.mock.calls[5]).toEqual(["CELL[5, 3]", 2, 1, range]);
         });
     });
 
     describe("formula", () => {
         it("should return the top-left cell shared ref formula", () => {
-            spyOn(range, "startCell").and.returnValue({
-                getSharedRefFormula: jasmine.createSpy("getSharedRefFormula").and.returnValue("RETURN")
+            vi.spyOn(range, "startCell").mockReturnValue({
+                getSharedRefFormula: vi.fn().mockReturnValue("RETURN")
             });
 
             expect(range.formula()).toBe("RETURN");
         });
 
         it("should set the shared formula", () => {
-            sheet.incrementMaxSharedFormulaId.and.returnValue(8);
-            const cells = [];
-            sheet.cell.and.callFake((rowNumber, columnNumber) => {
+            sheet.incrementMaxSharedFormulaId.mockReturnValue(8);
+            const cells: any = [];
+            sheet.cell.mockImplementation((rowNumber: number, columnNumber: number) => {
                 return cells[`${rowNumber}, ${columnNumber}`] = {
-                    setSharedFormula: jasmine.createSpy("setSharedFormula")
+                    setSharedFormula: vi.fn()
                 };
             });
 
@@ -140,24 +137,24 @@ describe("Range", () => {
 
     describe("map", () => {
         it("should call the callback for each cell and return the values", () => {
-            const callback = jasmine.createSpy("callback").and.callFake((cell, ri, ci) => `RETURN[${ri}, ${ci}]`);
-            expect(range.map(callback)).toEqualJson([
+            const callback = vi.fn().mockImplementation((cell: any, ri: number, ci: number) => `RETURN[${ri}, ${ci}]`);
+            expect(range.map(callback)).toEqual([
                 ["RETURN[0, 0]", "RETURN[0, 1]"],
                 ["RETURN[1, 0]", "RETURN[1, 1]"],
                 ["RETURN[2, 0]", "RETURN[2, 1]"]
             ]);
-            expect(callback.calls.argsFor(0)).toEqualJson(["CELL[3, 2]", 0, 0, range]);
-            expect(callback.calls.argsFor(1)).toEqualJson(["CELL[3, 3]", 0, 1, range]);
-            expect(callback.calls.argsFor(2)).toEqualJson(["CELL[4, 2]", 1, 0, range]);
-            expect(callback.calls.argsFor(3)).toEqualJson(["CELL[4, 3]", 1, 1, range]);
-            expect(callback.calls.argsFor(4)).toEqualJson(["CELL[5, 2]", 2, 0, range]);
-            expect(callback.calls.argsFor(5)).toEqualJson(["CELL[5, 3]", 2, 1, range]);
+            expect(callback.mock.calls[0]).toEqual(["CELL[3, 2]", 0, 0, range]);
+            expect(callback.mock.calls[1]).toEqual(["CELL[3, 3]", 0, 1, range]);
+            expect(callback.mock.calls[2]).toEqual(["CELL[4, 2]", 1, 0, range]);
+            expect(callback.mock.calls[3]).toEqual(["CELL[4, 3]", 1, 1, range]);
+            expect(callback.mock.calls[4]).toEqual(["CELL[5, 2]", 2, 0, range]);
+            expect(callback.mock.calls[5]).toEqual(["CELL[5, 3]", 2, 1, range]);
         });
     });
 
     describe("merged", () => {
         it("should get merged", () => {
-            sheet.merged.and.returnValue("RETURN");
+            sheet.merged.mockReturnValue("RETURN");
             expect(range.merged()).toBe("RETURN");
             expect(sheet.merged).toHaveBeenCalledWith("B3:C5");
         });
@@ -175,14 +172,14 @@ describe("Range", () => {
 
     describe("reduce", () => {
         it("should call the callback for each cell and return the aggregate value", () => {
-            const callback = jasmine.createSpy("callback").and.callFake((accumulator, cell, ri, ci) => `${accumulator} RETURN[${ri}, ${ci}]`);
+            const callback = vi.fn().mockImplementation((accumulator: string, cell: any, ri: number, ci: number) => `${accumulator} RETURN[${ri}, ${ci}]`);
             expect(range.reduce(callback, "INITIAL")).toBe("INITIAL RETURN[0, 0] RETURN[0, 1] RETURN[1, 0] RETURN[1, 1] RETURN[2, 0] RETURN[2, 1]");
-            expect(callback.calls.argsFor(0)).toEqualJson(["INITIAL", "CELL[3, 2]", 0, 0, range]);
-            expect(callback.calls.argsFor(1)).toEqualJson(["INITIAL RETURN[0, 0]", "CELL[3, 3]", 0, 1, range]);
-            expect(callback.calls.argsFor(2)).toEqualJson(["INITIAL RETURN[0, 0] RETURN[0, 1]", "CELL[4, 2]", 1, 0, range]);
-            expect(callback.calls.argsFor(3)).toEqualJson(["INITIAL RETURN[0, 0] RETURN[0, 1] RETURN[1, 0]", "CELL[4, 3]", 1, 1, range]);
-            expect(callback.calls.argsFor(4)).toEqualJson(["INITIAL RETURN[0, 0] RETURN[0, 1] RETURN[1, 0] RETURN[1, 1]", "CELL[5, 2]", 2, 0, range]);
-            expect(callback.calls.argsFor(5)).toEqualJson(["INITIAL RETURN[0, 0] RETURN[0, 1] RETURN[1, 0] RETURN[1, 1] RETURN[2, 0]", "CELL[5, 3]", 2, 1, range]);
+            expect(callback.mock.calls[0]).toEqual(["INITIAL", "CELL[3, 2]", 0, 0, range]);
+            expect(callback.mock.calls[1]).toEqual(["INITIAL RETURN[0, 0]", "CELL[3, 3]", 0, 1, range]);
+            expect(callback.mock.calls[2]).toEqual(["INITIAL RETURN[0, 0] RETURN[0, 1]", "CELL[4, 2]", 1, 0, range]);
+            expect(callback.mock.calls[3]).toEqual(["INITIAL RETURN[0, 0] RETURN[0, 1] RETURN[1, 0]", "CELL[4, 3]", 1, 1, range]);
+            expect(callback.mock.calls[4]).toEqual(["INITIAL RETURN[0, 0] RETURN[0, 1] RETURN[1, 0] RETURN[1, 1]", "CELL[5, 2]", 2, 0, range]);
+            expect(callback.mock.calls[5]).toEqual(["INITIAL RETURN[0, 0] RETURN[0, 1] RETURN[1, 0] RETURN[1, 1] RETURN[2, 0]", "CELL[5, 3]", 2, 1, range]);
         });
     });
 
@@ -199,14 +196,14 @@ describe("Range", () => {
     });
 
     describe("style", () => {
-        let cell;
+        let cell: any;
         beforeEach(() => {
             cell = { style: style.style };
-            sheet.cell.and.returnValue(cell);
+            sheet.cell.mockReturnValue(cell);
         });
 
         it("should get a single style value", () => {
-            expect(range.style("foo")).toEqualJson([
+            expect(range.style("foo")).toEqual([
                 ["STYLE:foo", "STYLE:foo"],
                 ["STYLE:foo", "STYLE:foo"],
                 ["STYLE:foo", "STYLE:foo"]
@@ -215,7 +212,7 @@ describe("Range", () => {
         });
 
         it("should get multiple style values", () => {
-            expect(range.style(["foo", "bar"])).toEqualJson({
+            expect(range.style(["foo", "bar"])).toEqual({
                 foo: [
                     ["STYLE:foo", "STYLE:foo"],
                     ["STYLE:foo", "STYLE:foo"],
@@ -232,7 +229,7 @@ describe("Range", () => {
 
         it("should set a style from the callback", () => {
             let i = 0;
-            const callback = jasmine.createSpy("callback").and.callFake(() => i++);
+            const callback = vi.fn().mockImplementation(() => i++);
             expect(range.style("foo", callback)).toBe(range);
             expect(cell.style).toHaveBeenCalledWith("foo", 0);
             expect(cell.style).toHaveBeenCalledWith("foo", 1);
@@ -343,18 +340,17 @@ describe("Range", () => {
                 formula1: 'test1, test2, test3',
                 formula2: ''
             });
-        })
+        });
 
         it("should get the dataValidation from the range", () => {
             expect(range.dataValidation()).toBe("DATAVALIDATION");
             expect(sheet.dataValidation).toHaveBeenCalledWith("B3:C5");
         });
-
     });
 
     describe("tap", () => {
         it("should call the callback and return the range", () => {
-            const callback = jasmine.createSpy('callback').and.returnValue("RETURN");
+            const callback = vi.fn().mockReturnValue("RETURN");
             expect(range.tap(callback)).toBe(range);
             expect(callback).toHaveBeenCalledWith(range);
         });
@@ -362,21 +358,21 @@ describe("Range", () => {
 
     describe("thru", () => {
         it("should call the callback and return the callback return value", () => {
-            const callback = jasmine.createSpy('callback').and.returnValue("RETURN");
+            const callback = vi.fn().mockReturnValue("RETURN");
             expect(range.thru(callback)).toBe("RETURN");
             expect(callback).toHaveBeenCalledWith(range);
         });
     });
 
     describe("values", () => {
-        let cell;
+        let cell: any;
         beforeEach(() => {
-            cell = { value: jasmine.createSpy("value").and.returnValue("VALUE") };
-            sheet.cell.and.returnValue(cell);
+            cell = { value: vi.fn().mockReturnValue("VALUE") };
+            sheet.cell.mockReturnValue(cell);
         });
 
         it("should get the value", () => {
-            expect(range.value()).toEqualJson([
+            expect(range.value()).toEqual([
                 ["VALUE", "VALUE"],
                 ["VALUE", "VALUE"],
                 ["VALUE", "VALUE"]
@@ -386,7 +382,7 @@ describe("Range", () => {
 
         it("should set the value from the callback", () => {
             let i = 0;
-            const callback = jasmine.createSpy("callback").and.callFake(() => i++);
+            const callback = vi.fn().mockImplementation(() => i++);
             expect(range.value(callback)).toBe(range);
             expect(cell.value).toHaveBeenCalledWith(0);
             expect(cell.value).toHaveBeenCalledWith(1);

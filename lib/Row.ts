@@ -1,10 +1,10 @@
 "use strict";
 
-import _ = require("lodash");
-import Cell = require("./Cell");
-import regexify = require("./regexify");
-import ArgHandler = require("./ArgHandler");
-import addressConverter = require('./addressConverter');
+import _ from "lodash"
+import Cell from "./Cell"
+import regexify from "./regexify"
+import ArgHandler from "./ArgHandler"
+import addressConverter from './addressConverter'
 
 /**
  * A row.

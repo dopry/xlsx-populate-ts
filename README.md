@@ -1,7 +1,6 @@
-[![view on npm](http://img.shields.io/npm/v/xlsx-populate.svg)](https://www.npmjs.org/package/xlsx-populate)
-[![npm module downloads per month](http://img.shields.io/npm/dm/xlsx-populate.svg)](https://www.npmjs.org/package/xlsx-populate)
-[![Build Status](https://travis-ci.org/dtjohnson/xlsx-populate.svg?branch=master)](https://travis-ci.org/dtjohnson/xlsx-populate)
-[![Dependency Status](https://david-dm.org/dtjohnson/xlsx-populate.svg)](https://david-dm.org/dtjohnson/xlsx-populate)
+[![view on npm](http://img.shields.io/npm/v/@dopry/xlsx-populate-ts.svg)](https://www.npmjs.org/package/@dopry/xlsx-populate-ts)
+[![npm module downloads per month](http://img.shields.io/npm/dm/@dopry/xlsx-populate-ts.svg)](https://www.npmjs.org/package/@dopry/xlsx-populate-ts)
+[![Build Status](https://github.com/dopry/xlsx-populate-ts/actions/workflows/publish/badge.svg?branch=main)](https://github.com/dopry/xlsx-populate-ts)
 
 # xlsx-populate
 Excel XLSX parser/generator written in JavaScript with Node.js and browser support, jQuery/d3-style method chaining, encryption, and a focus on keeping existing workbook features and styles in tact.
@@ -40,7 +39,6 @@ Excel XLSX parser/generator written in JavaScript with Node.js and browser suppo
   * [How xlsx-populate Works](#how-xlsx-populate-works)
   * [Setting up your Environment](#setting-up-your-environment)
   * [Pull Request Checklist](#pull-request-checklist)
-  * [Gulp Tasks](#gulp-tasks)
 - [Style Reference](#style-reference)
 - [API Reference](#api-reference)
 
@@ -818,11 +816,7 @@ xlsx-populate just manipulates the XML data, it is able to preserve styles and o
 a fraction of the spec.
 
 ### Setting up your Environment
-You'll need to make sure [Node.js](https://nodejs.org/en/) v4+ is installed (as xlsx-populate uses ES6 syntax). You'll also
-need to install [gulp](https://github.com/gulpjs/gulp):
-```bash
-npm install -g gulp
-```
+You'll need to make sure [Node.js](https://nodejs.org/en/) v20+ is installed.
 
 Make sure you have [git](https://git-scm.com/) installed. Then follow [this guide](https://git-scm.com/book/en/v2/GitHub-Contributing-to-a-Project) to see how to check out code, branch, and
 then submit your code as a pull request. When you check out the code, you'll first need to install the npm dependencies.
@@ -840,9 +834,9 @@ You should see the test output in your console window. As you edit files the tes
 broken anything. (Note that if you've added new files you'll need to restart gulp for the new files to be watched.)
 
 Now write your code and make sure to add [Jasmine](https://jasmine.github.io/) unit tests. When you are finished, you need
-to build the code for the browser. Do that by running the gulp build command:
+to build the code. Do that by running the npm run build command:
 ```bash
-gulp build
+npm run build
 ```
 
 Verify all is working, check in your code, and submit a pull request.

@@ -1,15 +1,10 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import SharedStrings from '../../lib/SharedStrings';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 describe("SharedStrings", () => {
-    let SharedStrings, sharedStrings, sharedStringsNode;
+    let sharedStrings: any, sharedStringsNode: any;
 
     beforeEach(() => {
-        SharedStrings = proxyquire("../../dist/SharedStrings", {
-            '@noCallThru': true
-        });
-
         sharedStringsNode = {
             name: "sst",
             attributes: {
@@ -56,19 +51,19 @@ describe("SharedStrings", () => {
 
         it("should create a new entry if the string doesn't exist", () => {
             expect(sharedStrings.getIndexForString("baz")).toBe(3);
-            expect(sharedStrings._stringArray).toEqualJson([
+            expect(sharedStrings._stringArray).toEqual([
                 "foo",
                 "bar",
                 [{ name: "r", children: [{}] }, { name: "r", children: [{}] }],
                 "baz"
             ]);
-            expect(sharedStrings._indexMap).toEqualJson({
+            expect(sharedStrings._indexMap).toEqual({
                 foo: 0,
                 bar: 1,
                 '[{"name":"r","children":[{}]},{"name":"r","children":[{}]}]': 2,
                 baz: 3
             });
-            expect(sharedStringsNode.children[sharedStringsNode.children.length - 1]).toEqualJson({
+            expect(sharedStringsNode.children[sharedStringsNode.children.length - 1]).toEqual({
                 name: "si",
                 children: [
                     {
@@ -82,19 +77,19 @@ describe("SharedStrings", () => {
 
         it("should create a new array entry if the array doesn't exist", () => {
             expect(sharedStrings.getIndexForString([{ name: "r", children: [{}] }])).toBe(3);
-            expect(sharedStrings._stringArray).toEqualJson([
+            expect(sharedStrings._stringArray).toEqual([
                 "foo",
                 "bar",
                 [{ name: "r", children: [{}] }, { name: "r", children: [{}] }],
                 [{ name: "r", children: [{}] }]
             ]);
-            expect(sharedStrings._indexMap).toEqualJson({
+            expect(sharedStrings._indexMap).toEqual({
                 foo: 0,
                 bar: 1,
                 '[{"name":"r","children":[{}]},{"name":"r","children":[{}]}]': 2,
                 '[{"name":"r","children":[{}]}]': 3
             });
-            expect(sharedStringsNode.children[sharedStringsNode.children.length - 1]).toEqualJson({
+            expect(sharedStringsNode.children[sharedStringsNode.children.length - 1]).toEqual({
                 name: "si",
                 children: [{ name: "r", children: [{}] }]
             });
@@ -130,13 +125,13 @@ describe("SharedStrings", () => {
             sharedStrings._indexMap = {};
             sharedStrings._cacheExistingSharedStrings();
 
-            expect(sharedStrings._stringArray).toEqualJson([
+            expect(sharedStrings._stringArray).toEqual([
                 "foo",
                 "bar",
                 [{ name: "r", children: [{}] }, { name: "r", children: [{}] }],
                 "baz"
             ]);
-            expect(sharedStrings._indexMap).toEqualJson({
+            expect(sharedStrings._indexMap).toEqual({
                 foo: 0,
                 bar: 1,
                 '[{"name":"r","children":[{}]},{"name":"r","children":[{}]}]': 2,
@@ -148,7 +143,7 @@ describe("SharedStrings", () => {
     describe("_init", () => {
         it("should create the node if needed", () => {
             sharedStrings._init(null);
-            expect(sharedStrings._node).toEqualJson({
+            expect(sharedStrings._node).toEqual({
                 name: "sst",
                 attributes: {
                     xmlns: "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
@@ -158,7 +153,7 @@ describe("SharedStrings", () => {
         });
 
         it("should clear the counts", () => {
-            expect(sharedStrings._node.attributes).toEqualJson({
+            expect(sharedStrings._node.attributes).toEqual({
                 xmlns: "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
             });
         });

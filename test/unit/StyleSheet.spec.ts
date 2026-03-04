@@ -1,16 +1,14 @@
-"use strict";
+const MockStyle = vi.hoisted(() => vi.fn());
+vi.mock('../../lib/Style', () => ({ default: MockStyle }));
 
-const proxyquire = require("proxyquire");
+import StyleSheet from '../../lib/StyleSheet';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 
 describe("StyleSheet", () => {
-    let Style, StyleSheet, styleSheet, styleSheetNode;
+    let styleSheet: any, styleSheetNode: any;
 
     beforeEach(() => {
-        Style = jasmine.createSpy("_Style");
-        StyleSheet = proxyquire("../../dist/StyleSheet", {
-            "./Style": Style,
-            '@noCallThru': true
-        });
+        MockStyle.mockClear();
 
         styleSheetNode = {
             name: "styleSheet",
@@ -19,59 +17,34 @@ describe("StyleSheet", () => {
             },
             children: [{
                 name: "fonts",
-                attributes: {
-                    count: 1,
-                    'x14ac:knownFonts': 1
-                },
+                attributes: { count: 1, 'x14ac:knownFonts': 1 },
                 children: []
             }, {
                 name: "fills",
-                attributes: {
-                    count: 11
-                },
+                attributes: { count: 11 },
                 children: []
             }, {
                 name: "borders",
-                attributes: {
-                    count: 10
-                },
+                attributes: { count: 10 },
                 children: [{
                     name: "border",
-                    attributes: {
-                        foo: "bar"
-                    },
+                    attributes: { foo: "bar" },
                     children: []
                 }]
             }, {
                 name: "cellStyleXfs",
-                attributes: {
-                    count: 1
-                },
+                attributes: { count: 1 },
                 children: [{
                     name: "xf",
-                    attributes: {
-                        numFmtId: 0,
-                        fontId: 0,
-                        fillId: 0,
-                        borderId: 0
-                    },
+                    attributes: { numFmtId: 0, fontId: 0, fillId: 0, borderId: 0 },
                     children: []
                 }]
             }, {
                 name: "cellXfs",
-                attributes: {
-                    count: 19
-                },
+                attributes: { count: 19 },
                 children: [{
                     name: "xf",
-                    attributes: {
-                        numFmtId: 0,
-                        fontId: 0,
-                        fillId: 0,
-                        borderId: 0,
-                        applyBorder: 1,
-                        xfId: 0
-                    },
+                    attributes: { numFmtId: 0, fontId: 0, fillId: 0, borderId: 0, applyBorder: 1, xfId: 0 },
                     children: []
                 }]
             }]
@@ -82,39 +55,29 @@ describe("StyleSheet", () => {
     describe("createStyle", () => {
         it("should clone an existing style", () => {
             const style = styleSheet.createStyle(0);
-            expect(style.constructor).toBe(Style);
-            expect(styleSheet._node.children).toEqualJson([{
+            expect(style.constructor).toBe(MockStyle);
+            expect(styleSheet._node.children).toEqual([{
                 name: "numFmts",
                 attributes: {},
                 children: []
             }, {
                 name: "fonts",
-                attributes: {
-                    'x14ac:knownFonts': 1
-                },
-                children: [
-                    { name: "font", attributes: {}, children: [] }
-                ]
+                attributes: { 'x14ac:knownFonts': 1 },
+                children: [{ name: "font", attributes: {}, children: [] }]
             }, {
                 name: "fills",
                 attributes: {},
-                children: [
-                    { name: "fill", attributes: {}, children: [] }
-                ]
+                children: [{ name: "fill", attributes: {}, children: [] }]
             }, {
                 name: "borders",
                 attributes: {},
                 children: [{
                     name: "border",
-                    attributes: {
-                        foo: "bar"
-                    },
+                    attributes: { foo: "bar" },
                     children: []
                 }, {
                     name: "border",
-                    attributes: {
-                        foo: "bar"
-                    },
+                    attributes: { foo: "bar" },
                     children: [
                         { name: "left", attributes: {}, children: [] },
                         { name: "right", attributes: {}, children: [] },
@@ -125,17 +88,10 @@ describe("StyleSheet", () => {
                 }]
             }, {
                 name: "cellStyleXfs",
-                attributes: {
-                    count: 1
-                },
+                attributes: { count: 1 },
                 children: [{
                     name: "xf",
-                    attributes: {
-                        numFmtId: 0,
-                        fontId: 0,
-                        fillId: 0,
-                        borderId: 0
-                    },
+                    attributes: { numFmtId: 0, fontId: 0, fillId: 0, borderId: 0 },
                     children: []
                 }]
             }, {
@@ -143,31 +99,15 @@ describe("StyleSheet", () => {
                 attributes: {},
                 children: [{
                     name: "xf",
-                    attributes: {
-                        numFmtId: 0,
-                        fontId: 0,
-                        fillId: 0,
-                        borderId: 0,
-                        applyBorder: 1,
-                        xfId: 0
-                    },
+                    attributes: { numFmtId: 0, fontId: 0, fillId: 0, borderId: 0, applyBorder: 1, xfId: 0 },
                     children: []
                 }, {
                     name: "xf",
-                    attributes: {
-                        numFmtId: 0,
-                        fontId: 0,
-                        fillId: 0,
-                        borderId: 1,
-                        applyFill: 1,
-                        applyFont: 1,
-                        applyBorder: 1,
-                        xfId: 0
-                    },
+                    attributes: { numFmtId: 0, fontId: 0, fillId: 0, borderId: 1, applyFill: 1, applyFont: 1, applyBorder: 1, xfId: 0 },
                     children: []
                 }]
             }]);
-            expect(Style).toHaveBeenCalledWith(
+            expect(MockStyle).toHaveBeenCalledWith(
                 styleSheet,
                 1,
                 styleSheet._cellXfsNode.children[1],
@@ -179,33 +119,25 @@ describe("StyleSheet", () => {
 
         it("should create a new style", () => {
             const style = styleSheet.createStyle(undefined);
-            expect(style.constructor).toBe(Style);
-            expect(styleSheet._node.children).toEqualJson([{
+            expect(style.constructor).toBe(MockStyle);
+            expect(styleSheet._node.children).toEqual([{
                 name: "numFmts",
                 attributes: {},
                 children: []
             }, {
                 name: "fonts",
-                attributes: {
-                    'x14ac:knownFonts': 1
-                },
-                children: [
-                    { name: "font", attributes: {}, children: [] }
-                ]
+                attributes: { 'x14ac:knownFonts': 1 },
+                children: [{ name: "font", attributes: {}, children: [] }]
             }, {
                 name: "fills",
                 attributes: {},
-                children: [
-                    { name: "fill", attributes: {}, children: [] }
-                ]
+                children: [{ name: "fill", attributes: {}, children: [] }]
             }, {
                 name: "borders",
                 attributes: {},
                 children: [{
                     name: "border",
-                    attributes: {
-                        foo: "bar"
-                    },
+                    attributes: { foo: "bar" },
                     children: []
                 }, {
                     name: "border",
@@ -220,17 +152,10 @@ describe("StyleSheet", () => {
                 }]
             }, {
                 name: "cellStyleXfs",
-                attributes: {
-                    count: 1
-                },
+                attributes: { count: 1 },
                 children: [{
                     name: "xf",
-                    attributes: {
-                        numFmtId: 0,
-                        fontId: 0,
-                        fillId: 0,
-                        borderId: 0
-                    },
+                    attributes: { numFmtId: 0, fontId: 0, fillId: 0, borderId: 0 },
                     children: []
                 }]
             }, {
@@ -238,29 +163,15 @@ describe("StyleSheet", () => {
                 attributes: {},
                 children: [{
                     name: "xf",
-                    attributes: {
-                        numFmtId: 0,
-                        fontId: 0,
-                        fillId: 0,
-                        borderId: 0,
-                        applyBorder: 1,
-                        xfId: 0
-                    },
+                    attributes: { numFmtId: 0, fontId: 0, fillId: 0, borderId: 0, applyBorder: 1, xfId: 0 },
                     children: []
                 }, {
                     name: "xf",
-                    attributes: {
-                        fontId: 0,
-                        fillId: 0,
-                        borderId: 1,
-                        applyFill: 1,
-                        applyFont: 1,
-                        applyBorder: 1
-                    },
+                    attributes: { fontId: 0, fillId: 0, borderId: 1, applyFill: 1, applyFont: 1, applyBorder: 1 },
                     children: []
                 }]
             }]);
-            expect(Style).toHaveBeenCalledWith(
+            expect(MockStyle).toHaveBeenCalledWith(
                 styleSheet,
                 1,
                 styleSheet._cellXfsNode.children[1],
@@ -285,14 +196,11 @@ describe("StyleSheet", () => {
         });
 
         it("should add a custom format node if code doesn't exist", () => {
-            expect(styleSheet._numFmtsNode.children).toEqualJson([]);
+            expect(styleSheet._numFmtsNode.children).toEqual([]);
             expect(styleSheet.getNumberFormatId('foo')).toBe(164);
-            expect(styleSheet._numFmtsNode.children).toEqualJson([{
+            expect(styleSheet._numFmtsNode.children).toEqual([{
                 name: 'numFmt',
-                attributes: {
-                    formatCode: "foo",
-                    numFmtId: 164
-                }
+                attributes: { formatCode: "foo", numFmtId: 164 }
             }]);
         });
     });
@@ -318,7 +226,7 @@ describe("StyleSheet", () => {
 
     describe("_init", () => {
         it("should add the numFmts node and clear the counts", () => {
-            expect(styleSheet._numFmtsNode).toEqualJson({ name: "numFmts", attributes: {}, children: [] });
+            expect(styleSheet._numFmtsNode).toEqual({ name: "numFmts", attributes: {}, children: [] });
             expect(styleSheet._fontsNode.attributes.count).toBeUndefined();
             expect(styleSheet._fillsNode.attributes.count).toBeUndefined();
             expect(styleSheet._bordersNode.attributes.count).toBeUndefined();

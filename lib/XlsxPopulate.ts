@@ -1,10 +1,9 @@
 "use strict";
 
-import externals = require("./externals");
-import Workbook = require("./Workbook");
-import FormulaError = require("./FormulaError");
-import dateConverter = require("./dateConverter");
-import RichText = require("./RichText");
+import Workbook from "./Workbook"
+import FormulaError from "./FormulaError"
+import dateConverter from "./dateConverter"
+import RichText from "./RichText"
 
 /**
  * xlsx-poulate namespace.
@@ -50,7 +49,7 @@ class XlsxPopulate {
      * @param {string} [opts.password] - The password to decrypt the workbook.
      * @returns {Promise.<Workbook>} The workbook.
      */
-    static fromFileAsync(path, opts) {
+    static fromFileAsync(path, opts?) {
         return Workbook.fromFileAsync(path, opts);
     }
 
@@ -61,17 +60,6 @@ class XlsxPopulate {
      */
     static numberToDate(number) {
         return dateConverter.numberToDate(number);
-    }
-
-    /**
-     * The Promise library.
-     * @type {Promise}
-     */
-    static get Promise() {
-        return externals.Promise;
-    }
-    static set Promise(Promise) {
-        externals.Promise = Promise;
     }
 }
 

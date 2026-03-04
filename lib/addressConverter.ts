@@ -4,7 +4,7 @@
 // These methods get called a lot so disable the rule to allow V8 opmtimization.
 /* eslint-disable operator-assignment */
 
-import _ = require("lodash");
+import _ from "lodash"
 const ADDRESS_REGEX = /^(?:'?(.+?)'?!)?(?:(\$)?([A-Z]+)(\$)?(\d+)(?::(\$)?([A-Z]+)(\$)?(\d+))?|(\$)?([A-Z]+):(\$)?([A-Z]+)|(\$)?(\d+):(\$)?(\d+))$/;
 
 /**

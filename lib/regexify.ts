@@ -1,6 +1,6 @@
 "use strict";
 
-import _ = require("lodash");
+import _ from "lodash"
 
 /**
  * Convert a pattern to a RegExp.

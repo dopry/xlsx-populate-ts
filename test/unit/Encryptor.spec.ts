@@ -1,14 +1,10 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import Encryptor from '../../lib/Encryptor';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 describe("Encryptor", () => {
-    let Encryptor, XmlParser, XmlBuilder, encryptor;
+    let encryptor: any;
 
     beforeEach(() => {
-        Encryptor = proxyquire("../../dist/Encryptor", {
-            '@noCallThru': true
-        });
         encryptor = new Encryptor();
     });
 
@@ -52,12 +48,12 @@ describe("Encryptor", () => {
     });
 
     describe("_parseEncryptionInfoAsync", () => {
-        itAsync("should parse the encryption info", () => {
+        it("should parse the encryption info", () => {
             const xml = `<encryption xmlns="http://schemas.microsoft.com/office/2006/encryption" xmlns:p="http://schemas.microsoft.com/office/2006/keyEncryptor/password" xmlns:c="http://schemas.microsoft.com/office/2006/keyEncryptor/certificate"><keyData saltSize="16" blockSize="16" keyBits="256" hashSize="64" cipherAlgorithm="AES" cipherChaining="ChainingModeCBC" hashAlgorithm="SHA512" saltValue="UWYgcVRmEQ/aHrvzqA7xnQ=="/><dataIntegrity encryptedHmacKey="9On0eyZfGVgmwHm4Fi1tV2640oW2wKPEJrU4UY/FUuS2uYh2sh5GRn2mvZ9ifaCOI0P8kdtVcaqDkvxOWODVrw==" encryptedHmacValue="NHg7giBi9SGaKJV3dq4seA+dFaaTYJNkuDBWI0ct92hhJ8mqvzwfiUAyo5a/f+fUmP7QdtH4LIADvgGKXiJLEw=="/><keyEncryptors><keyEncryptor uri="http://schemas.microsoft.com/office/2006/keyEncryptor/password"><p:encryptedKey spinCount="100000" saltSize="16" blockSize="16" keyBits="256" hashSize="64" cipherAlgorithm="AES" cipherChaining="ChainingModeCBC" hashAlgorithm="SHA512" saltValue="hcJBsEzDpOwkH2qzS9eo3Q==" encryptedVerifierHashInput="T0cM1hi2GTWxzwEa0zZ4vg==" encryptedVerifierHashValue="Pz9v8OrlVkcbrcdfDrxjzD92phbLdUGgifErOSx84RD3E9/c52bVYea9gK+luia2DR727ecXkAjqJT6KGpaOMw==" encryptedKeyValue="hQZ/4Gzp34ILXQ0zc/pRe3JjZVoAjAl2cl1hA56ww9E="/></keyEncryptor></keyEncryptors></encryption>`;
             const input = Buffer.concat([Buffer.alloc(8), Buffer.from(xml)]);
             return encryptor._parseEncryptionInfoAsync(Buffer.from(input))
-                .then(output => {
-                    expect(output).toEqualJson({
+                .then((output: any) => {
+                    expect(output).toEqual({
                         package: {
                             cipherAlgorithm: 'AES',
                             cipherChaining: 'ChainingModeCBC',
@@ -100,7 +96,7 @@ describe("Encryptor", () => {
         const cipherText = Buffer.from("KEPYtNg0JfAy6H20RggidB7s6IiA16lJYrL/MfushFSGCwu6g1nWE+kbOe2/LnaNXPRtnXmFhhC/ITLEPFuWkpN8nT6FjDht2NCzmnzp85E=", "base64");
 
         it("should encrypt the data", () => {
-            const output = encryptor._crypt( true, "AES", "ChainingModeCBC", key, iv, plainText);
+            const output = encryptor._crypt(true, "AES", "ChainingModeCBC", key, iv, plainText);
             expect(output).toEqualUInt8Array(cipherText)
         });
 

@@ -1,15 +1,10 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import ContentTypes from '../../lib/ContentTypes';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 describe("ContentTypes", () => {
-    let ContentTypes, contentTypes, contentTypesNode;
+    let contentTypes: any, contentTypesNode: any;
 
     beforeEach(() => {
-        ContentTypes = proxyquire("../../dist/ContentTypes", {
-            '@noCallThru': true
-        });
-
         contentTypesNode = {
             name: "Types",
             attributes: {
@@ -46,7 +41,7 @@ describe("ContentTypes", () => {
     describe("add", () => {
         it("should add a new part", () => {
             contentTypes.add("NEW_PART_NAME", "NEW_CONTENT_TYPE");
-            expect(contentTypesNode.children[3]).toEqualJson({
+            expect(contentTypesNode.children[3]).toEqual({
                 name: "Override",
                 attributes: {
                     PartName: "NEW_PART_NAME",

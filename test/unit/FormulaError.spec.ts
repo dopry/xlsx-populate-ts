@@ -1,16 +1,6 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import FormulaError from '../../lib/FormulaError';
 
 describe("FormulaError", () => {
-    let FormulaError;
-
-    beforeEach(() => {
-        FormulaError = proxyquire("../../dist/FormulaError", {
-            '@noCallThru': true
-        });
-    });
-
     describe("error", () => {
         it("should return the error", () => {
             const formulaError = new FormulaError("foo");

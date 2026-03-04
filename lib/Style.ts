@@ -2,10 +2,10 @@
 
 /* eslint camelcase:off */
 
-import ArgHandler = require("./ArgHandler");
-import _ = require("lodash");
-import xmlq = require("./xmlq");
-import colorIndexes = require("./colorIndexes");
+import ArgHandler from "./ArgHandler"
+import _ from "lodash"
+import xmlq from "./xmlq"
+import colorIndexes from "./colorIndexes"
 
 /**
  * A style.

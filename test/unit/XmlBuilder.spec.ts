@@ -1,14 +1,10 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import XmlBuilder from '../../lib/XmlBuilder';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 describe("XmlBuilder", () => {
-    let XmlBuilder, xmlBuilder;
+    let xmlBuilder: any;
 
     beforeEach(() => {
-        XmlBuilder = proxyquire("../../dist/XmlBuilder", {
-            '@noCallThru': true
-        });
         xmlBuilder = new XmlBuilder();
     });
 

@@ -1,8 +1,8 @@
 "use strict";
 
-import _ = require("lodash");
-import xmlq = require("./xmlq");
-import Style = require("./Style");
+import _ from "lodash"
+import xmlq from "./xmlq"
+import Style from "./Style"
 
 /**
  * Standard number format codes

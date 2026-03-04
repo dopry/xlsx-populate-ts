@@ -1,31 +1,26 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import ArgHandler from '../../lib/ArgHandler';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 
 describe("ArgHandler", () => {
-    let ArgHandler, argHandler, handlers, Style;
+    let argHandler: any, handlers: any, Style: any;
 
     beforeEach(() => {
         Style = class {}
         if (!Style.name) Style.name = "Style";
 
-        ArgHandler = proxyquire("../../dist/ArgHandler", {
-            '@noCallThru': true
-        });
-
         handlers = {
-            empty: jasmine.createSpy("empty").and.returnValue('empty'),
-            nil: jasmine.createSpy("nil").and.returnValue("nil"),
-            string: jasmine.createSpy("string").and.returnValue("string"),
-            boolean: jasmine.createSpy("boolean").and.returnValue("boolean"),
-            number: jasmine.createSpy("number").and.returnValue("number"),
-            integer: jasmine.createSpy("integer").and.returnValue("integer"),
-            function: jasmine.createSpy("function").and.returnValue("function"),
-            array: jasmine.createSpy("array").and.returnValue("array"),
-            date: jasmine.createSpy("date").and.returnValue("date"),
-            object: jasmine.createSpy("object").and.returnValue("object"),
-            Style: jasmine.createSpy("style").and.returnValue("Style"),
-            '*': jasmine.createSpy("*").and.returnValue("*")
+            empty: vi.fn().mockReturnValue('empty'),
+            nil: vi.fn().mockReturnValue("nil"),
+            string: vi.fn().mockReturnValue("string"),
+            boolean: vi.fn().mockReturnValue("boolean"),
+            number: vi.fn().mockReturnValue("number"),
+            integer: vi.fn().mockReturnValue("integer"),
+            function: vi.fn().mockReturnValue("function"),
+            array: vi.fn().mockReturnValue("array"),
+            date: vi.fn().mockReturnValue("date"),
+            object: vi.fn().mockReturnValue("object"),
+            Style: vi.fn().mockReturnValue("Style"),
+            '*': vi.fn().mockReturnValue("*")
         };
 
         argHandler = new ArgHandler("METHOD")

@@ -1,26 +1,25 @@
 "use strict";
 
-import _ = require("lodash");
-import fs = require("fs");
-import JSZip = require('jszip');
+import _ from "lodash"
+import fs from "fs"
+import JSZip from 'jszip'
 
-import externals = require("./externals");
-import regexify = require("./regexify");
-import _blank = require("./blank");
+import regexify from "./regexify"
+import _blank from "./blank"
 const blank = _blank();
-import xmlq = require("./xmlq");
-import Sheet = require("./Sheet");
-import ContentTypes = require("./ContentTypes");
-import AppProperties = require("./AppProperties");
-import CoreProperties = require("./CoreProperties");
-import Relationships = require("./Relationships");
-import SharedStrings = require("./SharedStrings");
-import StyleSheet = require("./StyleSheet");
-import Encryptor = require("./Encryptor");
-import XmlParser = require("./XmlParser");
-import XmlBuilder = require("./XmlBuilder");
-import ArgHandler = require("./ArgHandler");
-import addressConverter = require("./addressConverter");
+import xmlq from "./xmlq"
+import Sheet from "./Sheet"
+import ContentTypes from "./ContentTypes"
+import AppProperties from "./AppProperties"
+import CoreProperties from "./CoreProperties"
+import Relationships from "./Relationships"
+import SharedStrings from "./SharedStrings"
+import StyleSheet from "./StyleSheet"
+import Encryptor from "./Encryptor"
+import XmlParser from "./XmlParser"
+import XmlBuilder from "./XmlBuilder"
+import ArgHandler from "./ArgHandler"
+import addressConverter from "./addressConverter"
 
 // Options for adding files to zip. Do not create folders and use a fixed time at epoch.
 // The default JSZip behavior uses current time, which causes idential workbooks to be different each time.
@@ -96,7 +95,7 @@ class Workbook {
      */
     static fromFileAsync(path, opts) {
         if (process.browser) throw new Error("Workbook.fromFileAsync is not supported in the browser");
-        return new externals.Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             fs.readFile(path, (err, data) => {
                 if (err) return reject(err);
                 resolve(data);
@@ -424,7 +423,7 @@ class Workbook {
     toFileAsync(path, opts) {
         if (process.browser) throw new Error("Workbook.toFileAsync is not supported in the browser.");
         return this.outputAsync(opts)
-            .then(data => new externals.Promise((resolve, reject) => {
+            .then(data => new Promise<void>((resolve, reject) => {
                 fs.writeFile(path, data, err => {
                     if (err) return reject(err);
                     resolve();
@@ -653,7 +652,7 @@ class Workbook {
         this._maxSheetId = 0;
         this._sheets = [];
 
-        return externals.Promise.resolve()
+        return Promise.resolve()
             .then(() => {
                 // Make sure the input is a Buffer
                 return this._convertInputToBufferAsync(data, opts.base64)
@@ -714,7 +713,7 @@ class Workbook {
 
                 // Load each sheet.
                 this._sheetsNode = xmlq.findChild(this._node, "sheets");
-                return externals.Promise.all(_.map(this._sheetsNode.children, (sheetIdNode, i) => {
+                return Promise.all(_.map(this._sheetsNode.children, (sheetIdNode, i) => {
                     if (sheetIdNode.attributes.sheetId > this._maxSheetId) this._maxSheetId = sheetIdNode.attributes.sheetId;
 
                     return this._parseNodesAsync([`xl/worksheets/sheet${i + 1}.xml`, `xl/worksheets/_rels/sheet${i + 1}.xml.rels`])
@@ -738,9 +737,9 @@ class Workbook {
      * @private
      */
     _parseNodesAsync(names) {
-        return externals.Promise.all(_.map(names, name => this._zip.file(name)))
-            .then(files => externals.Promise.all(_.map(files, file => file && file.async("string"))))
-            .then(texts => externals.Promise.all(_.map(texts, text => text && xmlParser.parseAsync(text))));
+        return Promise.all(_.map(names, name => this._zip.file(name)))
+            .then(files => Promise.all(_.map(files, file => file && file.async("string"))))
+            .then(texts => Promise.all(_.map(texts, text => text && xmlParser.parseAsync(text))));
     }
 
     /**
@@ -827,12 +826,12 @@ class Workbook {
      * @private
      */
     _convertInputToBufferAsync(input, base64) {
-        return externals.Promise.resolve()
+        return Promise.resolve()
             .then(() => {
                 if (Buffer.isBuffer(input)) return input;
 
                 if (process.browser && input instanceof Blob) {
-                    return new externals.Promise(resolve => {
+                    return new Promise(resolve => {
                         const fileReader = new (globalThis as any).FileReader();
                         fileReader.onload = event => {
                             resolve(Buffer.from(event.target.result));

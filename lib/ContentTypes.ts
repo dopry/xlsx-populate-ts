@@ -1,6 +1,6 @@
 "use strict";
 
-import _ = require("lodash");
+import _ from "lodash"
 
 /**
  * A content type collection.

@@ -1,25 +1,21 @@
-"use strict";
-
-const XlsxPoplate = require('../../dist/XlsxPopulate');
-const RichText = require('../../dist/RichText');
-const RichTextFragment = require('../../dist/RichTextFragment');
+import XlsxPopulate from '../../lib/XlsxPopulate';
+import RichText from '../../lib/RichText';
+import RichTextFragment from '../../lib/RichTextFragment';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 describe("RichText", () => {
-    let cell, workbook, cell2, cell3;
+    let cell: any, workbook: any, cell2: any, cell3: any;
 
-    beforeEach(done => {
-        XlsxPoplate.fromBlankAsync()
-            .then(wb => {
-                workbook = wb;
-                cell = workbook.sheet(0).cell(1, 1);
-                cell2 = workbook.sheet(0).cell(1, 2);
-                cell3 = workbook.sheet(0).cell(1, 3);
-                done();
-            });
+    beforeEach(async () => {
+        const wb = await XlsxPopulate.fromBlankAsync();
+        workbook = wb;
+        cell = workbook.sheet(0).cell(1, 1);
+        cell2 = workbook.sheet(0).cell(1, 2);
+        cell3 = workbook.sheet(0).cell(1, 3);
     });
 
     it('global export', () => {
-        expect(RichText === XlsxPoplate.RichText).toBe(true);
+        expect(RichText === (XlsxPopulate as any).RichText).toBe(true);
     });
 
     describe("add/get", () => {
@@ -133,7 +129,7 @@ describe("RichText", () => {
     });
 
     describe('styles', () => {
-        let fontNode, fragment;
+        let fontNode: any, fragment: any;
 
         beforeEach(() => {
             fragment = new RichTextFragment('text');
@@ -316,11 +312,8 @@ describe("RichText", () => {
         expect(rt.get(1)._valueNode.attributes['xml:space']).toBe('preserve');
     });
 
-    xit('it should save unsupported node', done => {
-        XlsxPoplate.fromFileAsync('./test/files/issue-230.xlsx')
-            .then(wb => {
-                expect(wb.sheet(0).cell('A1').value()._remainingNodes.length).toBe(5);
-                done();
-            });
+    it.skip('it should save unsupported node', async () => {
+        const wb = await XlsxPopulate.fromFileAsync('./test/files/issue-230.xlsx');
+        expect(wb.sheet(0).cell('A1').value()._remainingNodes.length).toBe(5);
     });
 });

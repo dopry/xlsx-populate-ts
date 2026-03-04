@@ -1,7 +1,7 @@
-[![view on npm](http://img.shields.io/npm/v/xlsx-populate.svg)](https://www.npmjs.org/package/xlsx-populate)
-[![npm module downloads per month](http://img.shields.io/npm/dm/xlsx-populate.svg)](https://www.npmjs.org/package/xlsx-populate)
-[![Build Status](https://travis-ci.org/dtjohnson/xlsx-populate.svg?branch=master)](https://travis-ci.org/dtjohnson/xlsx-populate)
-[![Dependency Status](https://david-dm.org/dtjohnson/xlsx-populate.svg)](https://david-dm.org/dtjohnson/xlsx-populate)
+[![view on npm](http://img.shields.io/npm/v/@dopry/xlsx-populate-ts.svg)](https://www.npmjs.org/package/@dopry/xlsx-populate-ts)
+[![npm module downloads per month](http://img.shields.io/npm/dm/@dopry/xlsx-populate-ts.svg)](https://www.npmjs.org/package/@dopry/xlsx-populate-ts)
+[![Build Status](https://github.com/dopry/xlsx-populate-ts/actions/workflows/publish/badge.svg?branch=main)](https://github.com/dopry/xlsx-populate-ts)
+
 
 # xlsx-populate
 Excel XLSX parser/generator written in JavaScript with Node.js and browser support, jQuery/d3-style method chaining, encryption, and a focus on keeping existing workbook features and styles in tact.
@@ -804,9 +804,9 @@ You should see the test output in your console window. As you edit files the tes
 broken anything. (Note that if you've added new files you'll need to restart gulp for the new files to be watched.)
 
 Now write your code and make sure to add [Jasmine](https://jasmine.github.io/) unit tests. When you are finished, you need
-to build the code for the browser. Do that by running the gulp build command:
+to build the code. Do that by running the npm run build command:
 ```bash
-gulp build
+npm run build
 ```
 
 Verify all is working, check in your code, and submit a pull request.

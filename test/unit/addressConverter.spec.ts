@@ -1,16 +1,7 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import { describe, expect, it } from 'vitest';
+import addressConverter from '../../lib/addressConverter';
 
 describe("addressConverter", () => {
-    let addressConverter;
-
-    beforeEach(() => {
-        addressConverter = proxyquire("../../dist/addressConverter", {
-            '@noCallThru': true
-        });
-    });
-
     describe("columnNameToNumber", () => {
         it("should convert the name to a number", () => {
             expect(addressConverter.columnNameToNumber('A')).toBe(1);
@@ -35,7 +26,7 @@ describe("addressConverter", () => {
 
     describe("fromAddress", () => {
         it("should parse a range", () => {
-            expect(addressConverter.fromAddress("A1:C3")).toEqualJson({
+            expect(addressConverter.fromAddress("A1:C3")).toEqual({
                 type: 'range',
                 startColumnAnchored: false,
                 startColumnName: 'A',
@@ -49,7 +40,7 @@ describe("addressConverter", () => {
                 endRowNumber: 3
             });
 
-            expect(addressConverter.fromAddress("Sheet1!$B$4:$D$1")).toEqualJson({
+            expect(addressConverter.fromAddress("Sheet1!$B$4:$D$1")).toEqual({
                 type: 'range',
                 sheetName: 'Sheet1',
                 startColumnAnchored: true,
@@ -66,7 +57,7 @@ describe("addressConverter", () => {
         });
 
         it("should parse a cell", () => {
-            expect(addressConverter.fromAddress("Z56")).toEqualJson({
+            expect(addressConverter.fromAddress("Z56")).toEqual({
                 type: 'cell',
                 columnAnchored: false,
                 columnName: 'Z',
@@ -75,7 +66,7 @@ describe("addressConverter", () => {
                 rowNumber: 56
             });
 
-            expect(addressConverter.fromAddress("'Sheet One'!$AC$1")).toEqualJson({
+            expect(addressConverter.fromAddress("'Sheet One'!$AC$1")).toEqual({
                 type: 'cell',
                 sheetName: 'Sheet One',
                 columnAnchored: true,
@@ -87,7 +78,7 @@ describe("addressConverter", () => {
         });
 
         it("should parse a column range", () => {
-            expect(addressConverter.fromAddress("Z:ZZ")).toEqualJson({
+            expect(addressConverter.fromAddress("Z:ZZ")).toEqual({
                 type: 'columnRange',
                 startColumnAnchored: false,
                 startColumnName: 'Z',
@@ -97,7 +88,7 @@ describe("addressConverter", () => {
                 endColumnNumber: 702
             });
 
-            expect(addressConverter.fromAddress("'Foo''s Bar'!$A:$B")).toEqualJson({
+            expect(addressConverter.fromAddress("'Foo''s Bar'!$A:$B")).toEqual({
                 type: 'columnRange',
                 sheetName: "Foo's Bar",
                 startColumnAnchored: true,
@@ -110,14 +101,14 @@ describe("addressConverter", () => {
         });
 
         it("should parse a column", () => {
-            expect(addressConverter.fromAddress("E:E")).toEqualJson({
+            expect(addressConverter.fromAddress("E:E")).toEqual({
                 type: 'column',
                 columnAnchored: false,
                 columnName: 'E',
                 columnNumber: 5
             });
 
-            expect(addressConverter.fromAddress("'Foo!'!$A:$A")).toEqualJson({
+            expect(addressConverter.fromAddress("'Foo!'!$A:$A")).toEqual({
                 type: 'column',
                 sheetName: "Foo!",
                 columnAnchored: true,
@@ -127,7 +118,7 @@ describe("addressConverter", () => {
         });
 
         it("should parse a row range", () => {
-            expect(addressConverter.fromAddress("103:104")).toEqualJson({
+            expect(addressConverter.fromAddress("103:104")).toEqual({
                 type: 'rowRange',
                 startRowAnchored: false,
                 startRowNumber: 103,
@@ -135,7 +126,7 @@ describe("addressConverter", () => {
                 endRowNumber: 104
             });
 
-            expect(addressConverter.fromAddress("Sheet1!$5:$3")).toEqualJson({
+            expect(addressConverter.fromAddress("Sheet1!$5:$3")).toEqual({
                 type: 'rowRange',
                 sheetName: 'Sheet1',
                 startRowAnchored: true,
@@ -146,13 +137,13 @@ describe("addressConverter", () => {
         });
 
         it("should parse a row", () => {
-            expect(addressConverter.fromAddress("23:23")).toEqualJson({
+            expect(addressConverter.fromAddress("23:23")).toEqual({
                 type: 'row',
                 rowAnchored: false,
                 rowNumber: 23
             });
 
-            expect(addressConverter.fromAddress("Sheet1!$5:$5")).toEqualJson({
+            expect(addressConverter.fromAddress("Sheet1!$5:$5")).toEqual({
                 type: 'row',
                 sheetName: 'Sheet1',
                 rowAnchored: true,

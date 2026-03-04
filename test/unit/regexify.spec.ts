@@ -1,16 +1,7 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import regexify from '../../lib/regexify';
+import { describe, expect, it } from 'vitest';
 
 describe("regexify", () => {
-    let regexify;
-
-    beforeEach(() => {
-        regexify = proxyquire("../../dist/regexify", {
-            '@noCallThru': true
-        });
-    });
-
     it("should return the regex with lastIndex reset", () => {
         const regexp = /.+/;
         regexp.lastIndex = 5;

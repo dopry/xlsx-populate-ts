@@ -2,10 +2,11 @@
 
 /* eslint camelcase:off */
 
-import ArgHandler = require("./ArgHandler");
-import _ = require("lodash");
-import xmlq = require("./xmlq");
-import colorIndexes = require("./colorIndexes");
+import ArgHandler from "./ArgHandler"
+import _ from "lodash"
+import xmlq from "./xmlq"
+import colorIndexes from "./colorIndexes"
+import RichText from "./RichText"
 
 /**
  * A Rich text fragment.
@@ -21,11 +22,11 @@ class RichTextFragment {
      * @constructor
      * @param {string|Object} value - Text value or XML node
      * @param {object|undefined|null} [styles] - Multiple styles.
-     * @param {RichText} richText - The rich text instance where this fragment belongs to.
+     * @param {RichText} [richText] - The rich text instance where this fragment belongs to.
      */
-    constructor(value, styles, richText) {
+    constructor(value: string | Object, styles?: object | undefined | null, richText?: RichText) {
         this._richText = richText;
-        if (value.name === 'r') {
+        if (typeof value === 'object' && value !== null && (value as any).name === 'r') {
             this._node = value;
             this._fontNode = xmlq.findChild(this._node, 'rPr');
             if (!this._fontNode) {

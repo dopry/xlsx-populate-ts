@@ -1,15 +1,10 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import Relationships from '../../lib/Relationships';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 describe("Relationships", () => {
-    let Relationships, relationships, relationshipsNode;
+    let relationships: any, relationshipsNode: any;
 
     beforeEach(() => {
-        Relationships = proxyquire("../../dist/Relationships", {
-            '@noCallThru': true
-        });
-
         relationshipsNode = {
             name: "Relationships",
             attributes: {
@@ -41,7 +36,7 @@ describe("Relationships", () => {
     describe("add", () => {
         it("should add a new relationship", () => {
             relationships.add("TYPE", "TARGET");
-            expect(relationshipsNode.children[2]).toEqualJson({
+            expect(relationshipsNode.children[2]).toEqual({
                 name: "Relationship",
                 attributes: {
                     Id: "rId3",
@@ -53,7 +48,7 @@ describe("Relationships", () => {
 
         it("should add a new relationship with target mode", () => {
             relationships.add("TYPE", "TARGET", "TARGET_MODE");
-            expect(relationshipsNode.children[2]).toEqualJson({
+            expect(relationshipsNode.children[2]).toEqual({
                 name: "Relationship",
                 attributes: {
                     Id: "rId3",
@@ -119,7 +114,7 @@ describe("Relationships", () => {
     describe("_init", () => {
         it("should create the node if needed", () => {
             relationships._init(null);
-            expect(relationships._node).toEqualJson({
+            expect(relationships._node).toEqual({
                 name: "Relationships",
                 attributes: {
                     xmlns: "http://schemas.openxmlformats.org/package/2006/relationships"

@@ -1,8 +1,8 @@
 "use strict";
 
-import _ = require("lodash");
-import xmlq = require("./xmlq");
-import ArgHandler = require("./ArgHandler");
+import _ from "lodash"
+import xmlq from "./xmlq"
+import ArgHandler from "./ArgHandler"
 
 /**
  * App properties

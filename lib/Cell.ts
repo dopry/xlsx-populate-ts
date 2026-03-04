@@ -1,14 +1,14 @@
 "use strict";
 
-import _ = require("lodash");
-import ArgHandler = require("./ArgHandler");
-import addressConverter = require("./addressConverter");
-import dateConverter = require("./dateConverter");
-import regexify = require("./regexify");
-import xmlq = require("./xmlq");
-import FormulaError = require("./FormulaError");
-import Style = require("./Style");
-import RichText = require("./RichText");
+import _ from "lodash"
+import ArgHandler from "./ArgHandler"
+import addressConverter from "./addressConverter"
+import dateConverter from "./dateConverter"
+import regexify from "./regexify"
+import xmlq from "./xmlq"
+import FormulaError from "./FormulaError"
+import Style from "./Style"
+import RichText from "./RichText"
 
 /**
  * A cell

@@ -1,7 +1,7 @@
 "use strict";
 
-import ArgHandler = require("./ArgHandler");
-import addressConverter = require("./addressConverter");
+import ArgHandler from "./ArgHandler"
+import addressConverter from "./addressConverter"
 
 /**
  * A range of cells.

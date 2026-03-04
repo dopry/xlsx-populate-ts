@@ -1,15 +1,10 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import CoreProperties from '../../lib/CoreProperties';
+import { describe, expect, it, beforeEach } from 'vitest';
 
 describe("CoreProperties", () => {
-    let CoreProperties, coreProperties, corePropertiesNode;
+    let coreProperties: any, corePropertiesNode: any;
 
     beforeEach(() => {
-        CoreProperties = proxyquire("../../dist/CoreProperties", {
-            '@noCallThru': true
-        });
-
         corePropertiesNode = {
             name: "Types",
             attributes: {

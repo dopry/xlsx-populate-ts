@@ -1,60 +1,49 @@
-"use strict";
+import { describe, it, beforeEach, expect, vi } from 'vitest';
+import _ from 'lodash';
+import { createSpyObj } from '../helpers/spyObj';
 
-const _ = require('lodash');
-const proxyquire = require("proxyquire");
+const MockCell = vi.hoisted(() => vi.fn());
+vi.mock('../../lib/Cell', () => ({ default: MockCell }));
+
+import Row from '../../lib/Row';
 
 describe("Row", () => {
-    let Row, Cell, row, rowNode, sheet, style, styleSheet, workbook, horizontalPageBreaks;
+    let row: any, rowNode: any, sheet: any, style: any, styleSheet: any, workbook: any, horizontalPageBreaks: any;
 
     beforeEach(() => {
         let i = 1;
-        Cell = jasmine.createSpy("Cell").and.callFake(function () {
-            this.id = i++;
-        });
-        Cell.prototype.columnNumber = jasmine.createSpy("columnNumber").and.returnValue(2);
-        Cell.prototype.toObject = jasmine.createSpy("toObject").and.callFake(function () {
-            return this.id;
-        });
-        Cell.prototype.find = jasmine.createSpy('find');
-        Cell.prototype.style = jasmine.createSpy('style');
 
-        Row = proxyquire("../../dist/Row", {
-            './Cell': Cell,
-            '@noCallThru': true
-        });
+        MockCell.mockClear();
+        MockCell.mockImplementation(function (this: any) { this.id = i++; });
+        MockCell.prototype.columnNumber = vi.fn().mockReturnValue(2);
+        MockCell.prototype.toObject = vi.fn().mockImplementation(function (this: any) { return this.id; });
+        MockCell.prototype.find = vi.fn();
+        MockCell.prototype.style = vi.fn();
 
-        const Style = class {};
-        if (!Style.name) Style.name = "Style";
-        Style.prototype.id = jasmine.createSpy("Style.id").and.returnValue("STYLE_ID");
-        Style.prototype.style = jasmine.createSpy("Style.style").and.callFake(name => `STYLE:${name}`);
+        const Style = class {} as any;
+        Style.prototype.id = vi.fn().mockReturnValue("STYLE_ID");
+        Style.prototype.style = vi.fn().mockImplementation((name: string) => `STYLE:${name}`);
         style = new Style();
 
-        styleSheet = jasmine.createSpyObj("styleSheet", ["createStyle"]);
-        styleSheet.createStyle.and.returnValue(style);
+        styleSheet = createSpyObj("styleSheet", ["createStyle"]);
+        styleSheet.createStyle.mockReturnValue(style);
 
-        workbook = jasmine.createSpyObj("workbook", ["sharedStrings", "styleSheet"]);
-        workbook.styleSheet.and.returnValue(styleSheet);
+        workbook = createSpyObj("workbook", ["sharedStrings", "styleSheet"]);
+        workbook.styleSheet.mockReturnValue(styleSheet);
 
-        horizontalPageBreaks = jasmine.createSpyObj("horizontalPageBreaks", ["add"]);
+        horizontalPageBreaks = createSpyObj("horizontalPageBreaks", ["add"]);
 
-        sheet = jasmine.createSpyObj('sheet', ['name', 'workbook', 'existingColumnStyleId', 'forEachExistingColumnNumber', 'horizontalPageBreaks']);
-        sheet.name.and.returnValue('NAME');
-        sheet.workbook.and.returnValue(workbook);
-        sheet.horizontalPageBreaks.and.returnValue(horizontalPageBreaks);
-        sheet.existingColumnStyleId.and.callFake(columnNumber => columnNumber === 4 ? "STYLE_ID" : undefined);
-        sheet.forEachExistingColumnNumber.and.callFake(callback => _.forEach([1, 2, 4], callback));
+        sheet = createSpyObj('sheet', ['name', 'workbook', 'existingColumnStyleId', 'forEachExistingColumnNumber', 'horizontalPageBreaks']);
+        sheet.name.mockReturnValue('NAME');
+        sheet.workbook.mockReturnValue(workbook);
+        sheet.horizontalPageBreaks.mockReturnValue(horizontalPageBreaks);
+        sheet.existingColumnStyleId.mockImplementation((columnNumber: number) => columnNumber === 4 ? "STYLE_ID" : undefined);
+        sheet.forEachExistingColumnNumber.mockImplementation((callback: (n: number) => void) => _.forEach([1, 2, 4], callback));
 
         rowNode = {
             name: 'row',
-            attributes: {
-                r: 7
-            },
-            children: [{
-                name: 'c',
-                attributes: {
-                    r: "B7"
-                }
-            }]
+            attributes: { r: 7 },
+            children: [{ name: 'c', attributes: { r: "B7" } }]
         };
 
         row = new Row(sheet, rowNode);
@@ -73,50 +62,50 @@ describe("Row", () => {
 
     describe("cell", () => {
         beforeEach(() => {
-            Cell.calls.reset();
+            MockCell.mockClear();
         });
 
         it("should return an existing cell", () => {
-            expect(row.cell(2)).toEqual(jasmine.any(Cell));
-            expect(Cell).not.toHaveBeenCalled();
+            expect(row.cell(2)).toBeInstanceOf(MockCell);
+            expect(MockCell).not.toHaveBeenCalled();
         });
 
-        it("should return an existing cell", () => {
-            expect(row.cell('B')).toEqual(jasmine.any(Cell));
-            expect(Cell).not.toHaveBeenCalled();
+        it("should return an existing cell by column name", () => {
+            expect(row.cell('B')).toBeInstanceOf(MockCell);
+            expect(MockCell).not.toHaveBeenCalled();
         });
 
-        it("should create a new cell as needed", () => {
+        it("should create a new cell as needed by number", () => {
             const cell = row.cell(5);
-            expect(cell).toEqual(jasmine.any(Cell));
-            expect(Cell).toHaveBeenCalledWith(row, 5, undefined);
+            expect(cell).toBeInstanceOf(MockCell);
+            expect(MockCell).toHaveBeenCalledWith(row, 5, undefined);
             expect(row._cells[5]).toBe(cell);
         });
 
-        it("should create a new cell as needed", () => {
+        it("should create a new cell as needed by column name", () => {
             const cell = row.cell('C');
-            expect(cell).toEqual(jasmine.any(Cell));
-            expect(Cell).toHaveBeenCalledWith(row, 3, undefined);
+            expect(cell).toBeInstanceOf(MockCell);
+            expect(MockCell).toHaveBeenCalledWith(row, 3, undefined);
             expect(row._cells[3]).toBe(cell);
         });
 
         it("should create a new cell with an existing column style id", () => {
-            sheet.existingColumnStyleId.and.returnValue(5);
-            expect(row.cell('C')).toEqual(jasmine.any(Cell));
-            expect(Cell).toHaveBeenCalledWith(row, 3, 5);
+            sheet.existingColumnStyleId.mockReturnValue(5);
+            expect(row.cell('C')).toBeInstanceOf(MockCell);
+            expect(MockCell).toHaveBeenCalledWith(row, 3, 5);
         });
 
         it("should create a new cell with an existing row style id", () => {
             rowNode.attributes.s = 3;
-            expect(row.cell('C')).toEqual(jasmine.any(Cell));
-            expect(Cell).toHaveBeenCalledWith(row, 3, 3);
+            expect(row.cell('C')).toBeInstanceOf(MockCell);
+            expect(MockCell).toHaveBeenCalledWith(row, 3, 3);
         });
 
         it("should create a new cell with an existing row and column style id", () => {
-            sheet.existingColumnStyleId.and.returnValue(5);
+            sheet.existingColumnStyleId.mockReturnValue(5);
             rowNode.attributes.s = 3;
-            expect(row.cell('C')).toEqual(jasmine.any(Cell));
-            expect(Cell).toHaveBeenCalledWith(row, 3, 3);
+            expect(row.cell('C')).toBeInstanceOf(MockCell);
+            expect(MockCell).toHaveBeenCalledWith(row, 3, 3);
         });
 
         it("should throw an exception on an index of 0", () => {
@@ -134,17 +123,11 @@ describe("Row", () => {
 
             row.height(56.7);
             expect(row.height()).toBe(56.7);
-            expect(rowNode.attributes).toEqualJson({
-                r: 7,
-                customHeight: 1,
-                ht: 56.7
-            });
+            expect(rowNode.attributes).toEqual({ r: 7, customHeight: 1, ht: 56.7 });
 
             row.height(undefined);
             expect(row.height()).toBeUndefined();
-            expect(rowNode.attributes).toEqualJson({
-                r: 7
-            });
+            expect(rowNode.attributes).toEqual({ r: 7 });
         });
     });
 
@@ -154,16 +137,11 @@ describe("Row", () => {
 
             row.hidden(true);
             expect(row.hidden()).toBe(true);
-            expect(rowNode.attributes).toEqualJson({
-                r: 7,
-                hidden: 1
-            });
+            expect(rowNode.attributes).toEqual({ r: 7, hidden: 1 });
 
             row.hidden(false);
             expect(row.hidden()).toBe(false);
-            expect(rowNode.attributes).toEqualJson({
-                r: 7
-            });
+            expect(rowNode.attributes).toEqual({ r: 7 });
         });
     });
 
@@ -181,7 +159,7 @@ describe("Row", () => {
 
     describe("style", () => {
         beforeEach(() => {
-            spyOn(row, "_createStyleIfNeeded");
+            vi.spyOn(row, "_createStyleIfNeeded");
             row._style = style;
         });
 
@@ -192,7 +170,7 @@ describe("Row", () => {
         });
 
         it("should get multiple styles", () => {
-            expect(row.style(["foo", "bar", "baz"])).toEqualJson({
+            expect(row.style(["foo", "bar", "baz"])).toEqual({
                 foo: "STYLE:foo", bar: "STYLE:bar", baz: "STYLE:baz"
             });
             expect(style.style).toHaveBeenCalledWith("foo");
@@ -228,9 +206,7 @@ describe("Row", () => {
         });
 
         it("should set multiple styles", () => {
-            expect(row.style({
-                foo: "FOO", bar: "BAR", baz: "BAZ"
-            })).toBe(row);
+            expect(row.style({ foo: "FOO", bar: "BAR", baz: "BAZ" })).toBe(row);
             expect(style.style).toHaveBeenCalledWith("foo", "FOO");
             expect(style.style).toHaveBeenCalledWith("bar", "BAR");
             expect(style.style).toHaveBeenCalledWith("baz", "BAZ");
@@ -263,13 +239,13 @@ describe("Row", () => {
             row._cells = [
                 undefined,
                 {
-                    sharesFormula: jasmine.createSpy("sharesFormula").and.returnValue(true),
-                    clear: jasmine.createSpy("clear")
+                    sharesFormula: vi.fn().mockReturnValue(true),
+                    clear: vi.fn()
                 },
                 undefined,
                 {
-                    sharesFormula: jasmine.createSpy("sharesFormula").and.returnValue(false),
-                    clear: jasmine.createSpy("clear")
+                    sharesFormula: vi.fn().mockReturnValue(false),
+                    clear: vi.fn()
                 }
             ];
 
@@ -283,13 +259,13 @@ describe("Row", () => {
 
     describe("find", () => {
         it("should return the matches", () => {
-            Cell.prototype.find.and.returnValue(true);
+            MockCell.prototype.find.mockReturnValue(true);
             expect(row.find('foo')).toEqual([row.cell(2)]);
-            expect(Cell.prototype.find).toHaveBeenCalledWith(/foo/gim, undefined);
+            expect(MockCell.prototype.find).toHaveBeenCalledWith(/foo/gim, undefined);
 
-            Cell.prototype.find.and.returnValue(false);
+            MockCell.prototype.find.mockReturnValue(false);
             expect(row.find('bar', 'baz')).toEqual([]);
-            expect(Cell.prototype.find).toHaveBeenCalledWith(/bar/gim, 'baz');
+            expect(MockCell.prototype.find).toHaveBeenCalledWith(/bar/gim, 'baz');
         });
     });
 
@@ -361,14 +337,9 @@ describe("Row", () => {
 
     describe("_init", () => {
         it("should store existing rows", () => {
-            expect(row._cells).toEqual([undefined, undefined, jasmine.any(Cell)]);
+            expect(row._cells).toEqual([undefined, undefined, expect.any(MockCell)]);
             expect(rowNode.children).toBe(row._cells);
-            expect(Cell).toHaveBeenCalledWith(row, {
-                name: 'c',
-                attributes: {
-                    r: "B7"
-                }
-            });
+            expect(MockCell).toHaveBeenCalledWith(row, { name: 'c', attributes: { r: "B7" } });
         });
     });
 });

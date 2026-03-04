@@ -1,16 +1,6 @@
-"use strict";
-
-const proxyquire = require("proxyquire");
+import dateConverter from '../../lib/dateConverter';
 
 describe("dateConverter", () => {
-    let dateConverter;
-
-    beforeEach(() => {
-        dateConverter = proxyquire("../../dist/dateConverter", {
-            '@noCallThru': true
-        });
-    });
-
     describe("dateToNumber", () => {
         it("should convert date to number", () => {
             expect(dateConverter.dateToNumber(new Date('01 Jan 1900 00:00:00'))).toBe(1);
