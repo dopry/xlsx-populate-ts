@@ -31,3 +31,5 @@ node_modules
 
 # TypeScript build output
 dist
+
+/test/e2e-generate/encrypted/out.xlsx

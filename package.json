@@ -63,7 +63,7 @@
     "@types/sax": "^1.2.7",
     "babelify": "^10.0.0",
     "browserify": "^16.5.0",
-    "edge-js": "^13.0.1",
+    "edge-js": "^25.0.1",
     "glob": "^7.1.6",
     "gulp": "^4.0.2",
     "gulp-eslint": "^6.0.0",
