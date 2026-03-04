@@ -1,7 +1,7 @@
 {
   "name": "@dopry/xlsx-populate-ts",
   "version": "0.0.0-semantic-release",
-  "description": "Excel XLSX parser/generator written in TypeScript with Node.js and browser support, jQuery/d3-style method chaining, and a focus on keeping existing workbook features and styles in tact.",
+  "description": "Excel XLSX parser/generator written in TypeScript with Node.js and browser support, jQuery/d3-style method chaining, and a focus on keeping existing workbook features and styles intact.",
   "keywords": [
     "excel",
     "workbook",
