@@ -48,23 +48,13 @@ Excel XLSX parser/generator written in JavaScript with Node.js and browser suppo
 
 ### Node.js
 ```bash
-npm install xlsx-populate
+npm install @dopry/xlsx-populate-ts
 ```
-Note that xlsx-populate uses ES6 features so only Node.js v4+ is supported.
 
 ### Browser
 
 A functional browser example can be found in [examples/browser/index.html](https://gitcdn.xyz/repo/dtjohnson/xlsx-populate/master/examples/browser/index.html).
 
-xlsx-populate is written first for Node.js. We use [browserify](http://browserify.org/) and [babelify](https://github.com/babel/babelify) to transpile and pack up the module for use in the browser.
-
-You have a number of options to include the code in the browser. You can download the combined, minified code from the browser directory in this repository or you can install with bower:
-```bash
-bower install xlsx-populate
-```
-After including the module in the browser, it is available globally as `XlsxPopulate`.
-
-Alternatively, you can require this module using [browserify](http://browserify.org/). Since xlsx-populate uses ES6 features, you will also need to use [babelify](https://github.com/babel/babelify) with [babel-preset-env](https://www.npmjs.com/package/babel-preset-env).
 
 ## Usage
 
@@ -868,23 +858,6 @@ To make sure your code is consistent and high quality, please make sure to follo
  * Whenever possible, do not modify/break existing API behavior. This module adheres to the [semantic versioning standard](https://docs.npmjs.com/getting-started/semantic-versioning). So any breaking changes will require a major release.
  * If your feature needs more documentation than just the JSDoc output, please add to the docs/template.md README file.
 
-
-### Gulp Tasks
-
-xlsx-populate uses [gulp](https://github.com/gulpjs/gulp) as a build tool. There are a number of tasks:
-
-* __browser__ - Transpile and build client-side JavaScript project bundle using [browserify](http://browserify.org/) and [babelify](https://github.com/babel/babelify).
-* __lint__ - Check project source code style using [ESLint](http://eslint.org/).
-* __unit__ - Run [Jasmine](https://jasmine.github.io/) unit tests.
-* __unit-browser__ - Run the unit tests in real browsers using [Karma](https://karma-runner.github.io/1.0/index.html).
-* __e2e-parse__ - End-to-end tests of parsing data out of sample workbooks that were created in Microsoft Excel.
-* __e2e-generate__ - End-to-end tests of generating workbooks using xlsx-populate. To verify the workbooks were truly generated correctly they need to be opened in Microsoft Excel and verified. This task automates this verification using the .NET Excel Interop library with [Edge.js](https://github.com/tjanczuk/edge) acting as a bridge between Node.js and C#. Note that these tests will _only_ run on Windows with Microsoft Excel and the [Primary Interop Assemblies installed](https://msdn.microsoft.com/en-us/library/kh3965hw.aspx).
-* __e2e-browser__ - End-to-end tests of usage of the browserify bundle in real browsers using Karma.
-* __blank__ - Convert a blank XLSX template into a JS buffer module to support [fromBlankAsync](#XlsxPopulate.fromBlankAsync).
-* __docs__ - Build this README doc by combining docs/template.md, API docs generated with [jsdoc-to-markdown](https://github.com/jsdoc2md/jsdoc-to-markdown), and a table of contents generated with [markdown-toc](https://github.com/jonschlinkert/markdown-toc).
-* __watch__ - Watch files for changes and then run associated gulp task. (Used by the default task.)
-* __build__ - Run all gulp tasks, including linting and tests, and build the docs and browser bundle.
-* __default__ - Run blank, unit, and docs tasks and watch the source files for those tasks for changes.
 
 ## Style Reference
 
