@@ -1,7 +1,5 @@
 "use strict";
 
-import _ from "lodash";
-
 /**
  * Method argument handler. Used for overloading methods.
  * @private
@@ -64,16 +62,16 @@ class ArgHandler {
   _argsMatchTypes(args, types) {
     if (args.length !== types.length) return false;
 
-    return _.every(args, (arg, i) => {
+    return Array.prototype.every.call(args, (arg, i) => {
       const type = types[i];
 
       if (type === "*") return true;
-      if (type === "nil") return _.isNil(arg);
+      if (type === "nil") return arg == null;
       if (type === "string") return typeof arg === "string";
       if (type === "boolean") return typeof arg === "boolean";
       if (type === "number") return typeof arg === "number";
       if (type === "integer")
-        return typeof arg === "number" && _.isInteger(arg);
+        return typeof arg === "number" && Number.isInteger(arg);
       if (type === "function") return typeof arg === "function";
       if (type === "array") return Array.isArray(arg);
       if (type === "date") return arg && arg.constructor === Date;

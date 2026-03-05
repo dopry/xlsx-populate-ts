@@ -1,4 +1,3 @@
-import _ from "lodash";
 import Column from "../../lib/Column";
 import { createSpyObj } from "../helpers/spyObj";
 import { describe, expect, it, beforeEach, vi } from "vitest";
@@ -66,8 +65,8 @@ describe("Column", () => {
     sheet.workbook.mockReturnValue(workbook);
     sheet.verticalPageBreaks.mockReturnValue(verticalPageBreaks);
     sheet.forEachExistingRow.mockImplementation(
-      (callback: _.ArrayIterator<any, any> | undefined) =>
-        _.forEach(existingRows, callback),
+      (callback: ((value: any, index: number) => void) | undefined) =>
+        callback && existingRows.forEach(callback),
     );
 
     columnNode = {

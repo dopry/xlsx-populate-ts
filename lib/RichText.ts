@@ -1,6 +1,4 @@
 "use strict";
-
-import _ from "lodash";
 import RichTextFragment from "./RichTextFragment";
 
 /**
@@ -82,8 +80,8 @@ export class RichText {
    * @return {RichText} A deep copied instance
    */
   copy(cell) {
-    const newRichText = new RichText(_.cloneDeep(this.toXml()));
-    if (cell && _.includes(this.text(), "\n")) {
+    const newRichText = new RichText(structuredClone(this.toXml()));
+    if (cell && this.text().includes("\n")) {
       cell.style("wrapText", true);
     }
     return newRichText;

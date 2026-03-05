@@ -3,7 +3,6 @@
 /* eslint camelcase:off */
 
 import ArgHandler from "./ArgHandler";
-import _ from "lodash";
 import xmlq from "./xmlq";
 import colorIndexes from "./colorIndexes";
 
@@ -85,7 +84,7 @@ class Style {
     if (child.attributes.hasOwnProperty("tint"))
       color.tint = child.attributes.tint;
 
-    if (_.isEmpty(color)) return;
+    if (!Object.keys(color).length) return;
 
     return color;
   }
@@ -391,7 +390,7 @@ class Style {
       const fill: any = {
         type: "gradient",
         gradientType,
-        stops: _.map(gradientFillNode.children, (stop) => ({
+        stops: gradientFillNode.children.map((stop) => ({
           position: stop.attributes.position,
           color: this._getColor(stop, "color"),
         })),
@@ -414,7 +413,7 @@ class Style {
     this._fillNode.children = [];
 
     // No fill
-    if (_.isNil(fill)) return;
+    if (fill == null) return;
 
     // Pattern fill
     if (fill.type === "pattern") {
@@ -446,7 +445,7 @@ class Style {
         degree: fill.angle,
       });
 
-      _.forEach(fill.stops, (fillStop, i) => {
+      fill.stops.forEach((fillStop, i) => {
         const stop = {
           name: "stop",
           attributes: { position: fillStop.position },
@@ -460,7 +459,7 @@ class Style {
     }
 
     // Solid fill (really a pattern fill with a solid pattern type).
-    if (!_.isObject(fill)) fill = { type: "solid", color: fill };
+    if (!fill || typeof fill !== "object") fill = { type: "solid", color: fill };
     else if (fill.hasOwnProperty("rgb") || fill.hasOwnProperty("theme"))
       fill = { color: fill };
 
@@ -493,14 +492,15 @@ class Style {
         if (direction) sideResult.direction = direction;
       }
 
-      if (!_.isEmpty(sideResult)) result[side] = sideResult;
+      if (Object.keys(sideResult).length) result[side] = sideResult;
     });
 
     return result;
   }
 
   _setBorder(settings) {
-    _.forOwn(settings, (setting, side) => {
+    Object.keys(settings || {}).forEach((side) => {
+      let setting = settings[side];
       if (typeof setting === "boolean") {
         setting = { style: setting ? "thin" : null };
       } else if (typeof setting === "string") {
@@ -541,17 +541,18 @@ class Style {
 
   _set_border(settings) {
     if (
-      _.isObject(settings) &&
+      settings && typeof settings === "object" &&
       !settings.hasOwnProperty("style") &&
       !settings.hasOwnProperty("color")
     ) {
-      settings = _.defaults(settings, {
+      settings = {
         left: null,
         right: null,
         top: null,
         bottom: null,
         diagonal: null,
-      });
+        ...settings,
+      };
       this._setBorder(settings);
     } else {
       this._setBorder({
@@ -564,12 +565,19 @@ class Style {
   }
 
   _get_borderColor() {
-    return _.mapValues(this._getBorder(), (value) => value.color);
+    const border = this._getBorder();
+    return Object.fromEntries(
+      Object.keys(border).map((key) => [key, border[key].color]),
+    );
   }
 
   _set_borderColor(color) {
-    if (_.isObject(color)) {
-      this._setBorder(_.mapValues(color, (color) => ({ color })));
+    if (color && typeof color === "object") {
+      this._setBorder(
+        Object.fromEntries(
+          Object.keys(color).map((key) => [key, { color: color[key] }]),
+        ),
+      );
     } else {
       this._setBorder({
         left: { color },
@@ -582,12 +590,19 @@ class Style {
   }
 
   _get_borderStyle() {
-    return _.mapValues(this._getBorder(), (value) => value.style);
+    const border = this._getBorder();
+    return Object.fromEntries(
+      Object.keys(border).map((key) => [key, border[key].style]),
+    );
   }
 
   _set_borderStyle(style) {
-    if (_.isObject(style)) {
-      this._setBorder(_.mapValues(style, (style) => ({ style })));
+    if (style && typeof style === "object") {
+      this._setBorder(
+        Object.fromEntries(
+          Object.keys(style).map((key) => [key, { style: style[key] }]),
+        ),
+      );
     } else {
       this._setBorder({
         left: { style },

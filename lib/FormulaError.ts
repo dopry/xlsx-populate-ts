@@ -1,7 +1,5 @@
 "use strict";
 
-import _ from "lodash";
-
 /**
  * A formula error (e.g. #DIV/0!).
  */
@@ -83,7 +81,7 @@ FormulaError.VALUE = new FormulaError("#VALUE!");
  */
 FormulaError.getError = (error) => {
   return (
-    _.find(FormulaError, (value) => {
+    Object.values(FormulaError).find((value) => {
       return value instanceof FormulaError && value.error() === error;
     }) || new FormulaError(error)
   );

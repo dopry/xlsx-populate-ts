@@ -1,7 +1,5 @@
 "use strict";
 
-import _ from "lodash";
-
 /**
  * XML query methods.
  * @private
@@ -41,7 +39,9 @@ const xmlq = {
    * @returns {undefined|{}} The child if found.
    */
   findChild(node, name) {
-    return _.find(node.children, { name });
+    return node && node.children
+      ? node.children.find((child) => child.name === name)
+      : undefined;
   },
 
   /**
@@ -63,7 +63,7 @@ const xmlq = {
    * @returns {boolean} True if found, false otherwise.
    */
   hasChild(node, name) {
-    return _.some(node.children, { name });
+    return !!(node && node.children && node.children.some((child) => child.name === name));
   },
 
   /**
@@ -120,7 +120,10 @@ const xmlq = {
    * @returns {boolean} True if empty, false otherwise.
    */
   isEmpty(node) {
-    return _.isEmpty(node.children) && _.isEmpty(node.attributes);
+    return (
+      (!node.children || node.children.length === 0) &&
+      (!node.attributes || Object.keys(node.attributes).length === 0)
+    );
   },
 
   /**
@@ -132,7 +135,7 @@ const xmlq = {
   removeChild(node, child) {
     if (!node.children) return;
     if (typeof child === "string") {
-      _.remove(node.children, { name: child });
+      node.children = node.children.filter((current) => current.name !== child);
     } else {
       const index = node.children.indexOf(child);
       if (index >= 0) node.children.splice(index, 1);
@@ -146,8 +149,9 @@ const xmlq = {
    * @returns {undefined}
    */
   setAttributes(node, attributes) {
-    _.forOwn(attributes, (value, attribute) => {
-      if (_.isNil(value)) {
+    Object.keys(attributes || {}).forEach((attribute) => {
+      const value = attributes[attribute];
+      if (value == null) {
         if (node.attributes) delete node.attributes[attribute];
       } else {
         if (!node.attributes) node.attributes = {};
@@ -165,8 +169,9 @@ const xmlq = {
    */
   setChildAttributes(node, name, attributes) {
     let child = this.findChild(node, name);
-    _.forOwn(attributes, (value, attribute) => {
-      if (_.isNil(value)) {
+    Object.keys(attributes || {}).forEach((attribute) => {
+      const value = attributes[attribute];
+      if (value == null) {
         if (child && child.attributes) delete child.attributes[attribute];
       } else {
         if (!child) {

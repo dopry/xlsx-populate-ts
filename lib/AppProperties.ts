@@ -1,8 +1,7 @@
 "use strict";
 
-import _ from "lodash";
-import xmlq from "./xmlq";
 import ArgHandler from "./ArgHandler";
+import xmlq from "./xmlq";
 
 /**
  * App properties

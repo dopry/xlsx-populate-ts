@@ -1,5 +1,4 @@
 import { describe, it, beforeEach, expect, vi, afterEach } from "vitest";
-import _ from "lodash";
 import { createSpyObj } from "../helpers/spyObj";
 
 // ─── Mock factories (hoisted so vi.mock factories can reference them) ────────
@@ -763,7 +762,7 @@ describe("Workbook", () => {
           (...args: unknown[]) => {
             const files = args[0] as string[];
             return Promise.all(
-              _.map(files, (file: string) => {
+              files.map((file: string) => {
                 if (file === "xl/workbook.xml") return resolved(workbookNode);
                 return resolved(`PARSED(${file})`);
               }),

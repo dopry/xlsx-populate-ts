@@ -1,7 +1,5 @@
 "use strict";
 
-import _ from "lodash";
-
 /**
  * A content type collection.
  * @ignore
@@ -42,8 +40,7 @@ class ContentTypes {
    * @returns {{}|undefined} The matching content type or undefined if not found.
    */
   findByPartName(partName) {
-    return _.find(
-      this._node.children,
+    return this._node.children.find(
       (node) => node.attributes.PartName === partName,
     );
   }

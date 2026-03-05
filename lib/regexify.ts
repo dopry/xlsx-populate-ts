@@ -1,6 +1,6 @@
 "use strict";
 
-import _ from "lodash";
+const escapeRegExp = (value: string) => value.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
 
 /**
  * Convert a pattern to a RegExp.
@@ -10,7 +10,7 @@ import _ from "lodash";
  */
 const regexify = (pattern: RegExp | string): RegExp => {
   if (typeof pattern === "string") {
-    pattern = new RegExp(_.escapeRegExp(pattern), "igm");
+    pattern = new RegExp(escapeRegExp(pattern), "igm");
   }
 
   (pattern as RegExp).lastIndex = 0;

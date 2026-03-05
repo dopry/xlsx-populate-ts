@@ -1,7 +1,5 @@
 "use strict";
 
-import _ from "lodash";
-
 const XML_DECLARATION = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`;
 
 /**
@@ -42,9 +40,9 @@ class XmlBuilder {
     }
 
     // If the node has a toXml method, call it.
-    if (node && _.isFunction(node.toXml)) node = node.toXml();
+    if (node && typeof node.toXml === "function") node = node.toXml();
 
-    if (_.isObject(node)) {
+    if (node && typeof node === "object") {
       const n: any = node;
       // If the node is an object, then it maps to an element. Check if it has a name.
       if (!n.name)
@@ -54,18 +52,21 @@ class XmlBuilder {
       xml += `<${n.name}`;
 
       // Add any node attributes
-      _.forOwn(n.attributes, (value, name) => {
-        xml += ` ${name}="${this._escapeString(value, true)}"`;
-      });
+      if (n.attributes && typeof n.attributes === "object") {
+        Object.keys(n.attributes).forEach((name) => {
+          const value = n.attributes[name];
+          xml += ` ${name}="${this._escapeString(value, true)}"`;
+        });
+      }
 
-      if (_.isEmpty(n.children)) {
+      if (!n.children || n.children.length === 0) {
         // Self-close the tag if no children.
         xml += "/>";
       } else {
         xml += ">";
 
         // Recursively add any children.
-        _.forEach(n.children, (child) => {
+        n.children.forEach((child) => {
           // Add the children to the XML.
           xml = this._build(child, xml);
         });
@@ -73,7 +74,7 @@ class XmlBuilder {
         // Close the tag.
         xml += `</${n.name}>`;
       }
-    } else if (!_.isNil(node)) {
+    } else if (node != null) {
       // It not an object, this should be a text node. Just add it.
       xml += this._escapeString(node);
     }
@@ -90,7 +91,7 @@ class XmlBuilder {
    * @private
    */
   _escapeString(value, isAttribute?) {
-    if (_.isNil(value)) return value;
+    if (value == null) return value;
     value = value
       .toString()
       .replace(/&/g, "&amp;") // Escape '&' first as the other escapes add them.

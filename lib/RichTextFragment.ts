@@ -3,7 +3,6 @@
 /* eslint camelcase:off */
 
 import ArgHandler from "./ArgHandler";
-import _ from "lodash";
 import xmlq from "./xmlq";
 import colorIndexes from "./colorIndexes";
 import RichText from "./RichText";
@@ -171,7 +170,7 @@ class RichTextFragment {
     if (child.attributes.hasOwnProperty("tint"))
       color.tint = child.attributes.tint;
 
-    if (_.isEmpty(color)) return;
+    if (!Object.keys(color).length) return;
 
     return color;
   }

@@ -1,6 +1,4 @@
 "use strict";
-
-import _ from "lodash";
 import Cell from "./Cell";
 import Row from "./Row";
 import Column from "./Column";
@@ -217,7 +215,7 @@ class Sheet {
       // If the existing node covered earlier columns than the new one, we need to have a col node to cover the min up to our new node.
       if (existingColNode.attributes.min < columnNumber) {
         // Clone the node and set the max to the column before our new col.
-        const beforeColNode = _.cloneDeep(existingColNode);
+        const beforeColNode = structuredClone(existingColNode);
         beforeColNode.attributes.max = columnNumber - 1;
 
         // Update the col nodes cache.
@@ -231,14 +229,14 @@ class Sheet {
       }
 
       // Make a clone for the new column. Set the min/max to the column number and cache it.
-      colNode = _.cloneDeep(existingColNode);
+      colNode = structuredClone(existingColNode);
       colNode.attributes.min = columnNumber;
       colNode.attributes.max = columnNumber;
       this._colNodes[columnNumber] = colNode;
 
       // If the max of the existing node is greater than the nre one, create a col node for that too.
       if (existingColNode.attributes.max > columnNumber) {
-        const afterColNode = _.cloneDeep(existingColNode);
+        const afterColNode = structuredClone(existingColNode);
         afterColNode.attributes.min = columnNumber + 1;
         for (
           let i = afterColNode.attributes.min;
@@ -358,10 +356,9 @@ class Sheet {
       })
       .case("*", (hidden) => {
         if (hidden) {
-          const visibleSheets = _.filter(
-            this.workbook().sheets(),
-            (sheet) => !sheet.hidden(),
-          );
+          const visibleSheets = this.workbook()
+            .sheets()
+            .filter((sheet) => !sheet.hidden());
           if (visibleSheets.length === 1 && visibleSheets[0] === this) {
             throw new Error(
               "This sheet may not be hidden as a workbook must contain at least one visible sheet.",
@@ -603,12 +600,21 @@ class Sheet {
    * @returns {Range|undefined} The used range or undefined if no cells in the sheet are used.
    */
   usedRange() {
-    const minRowNumber = _.findIndex(this._rows);
-    const maxRowNumber = this._rows.length - 1;
+    const rowNumbers = Object.keys(this._rows || {})
+      .map((key) => Number(key))
+      .filter((rowNumber) => rowNumber > 0 && this._rows[rowNumber]);
+    const minRowNumber = rowNumbers.length ? Math.min(...rowNumbers) : -1;
+    const rowCount =
+      typeof this._rows.length === "number"
+        ? this._rows.length
+        : rowNumbers.length
+          ? Math.max(...rowNumbers) + 1
+          : 0;
+    const maxRowNumber = rowCount - 1;
 
     let minColumnNumber = 0;
     let maxColumnNumber = 0;
-    for (let i = 0; i < this._rows.length; i++) {
+    for (let i = 0; i < rowCount; i++) {
       const row = this._rows[i];
       if (!row) continue;
 
@@ -709,7 +715,7 @@ class Sheet {
    * @ignore
    */
   forEachExistingColumnNumber(callback) {
-    _.forEach(this._colNodes, (node, columnNumber) => {
+    this._colNodes.forEach((node, columnNumber) => {
       if (!node) return;
       callback(columnNumber);
     });
@@ -722,7 +728,7 @@ class Sheet {
    * @ignore
    */
   forEachExistingRow(callback) {
-    _.forEach(this._rows, (row, rowNumber) => {
+    this._rows.forEach((row, rowNumber) => {
       if (row) callback(row, rowNumber);
     });
 
@@ -989,11 +995,11 @@ class Sheet {
    */
   toXmls() {
     // Shallow clone the node so we don't have to remove these children later if they don't belong.
-    const node = _.clone(this._node);
+    const node = { ...this._node };
     node.children = node.children.slice();
 
     // Add the columns if needed.
-    this._colsNode.children = _.filter(this._colNodes, (colNode, i) => {
+    this._colsNode.children = this._colNodes.filter((colNode, i) => {
       // Columns should only be present if they have attributes other than min/max.
       return (
         colNode &&
@@ -1006,7 +1012,7 @@ class Sheet {
     }
 
     // Add the hyperlinks if needed.
-    this._hyperlinksNode.children = _.values(this._hyperlinks);
+    this._hyperlinksNode.children = Object.values(this._hyperlinks);
     if (this._hyperlinksNode.children.length) {
       xmlq.insertInOrder(node, this._hyperlinksNode, nodeOrder);
     }
@@ -1021,10 +1027,11 @@ class Sheet {
     // Add the pageMargins if needed.
     if (this._pageMarginsNode && this._pageMarginsPresetName) {
       // Clone to preserve the current state of this sheet.
-      const childNode = _.clone(this._pageMarginsNode);
+      const childNode = { ...this._pageMarginsNode };
       if (Object.keys(this._pageMarginsNode.attributes).length) {
         // Fill in any missing attribute values with presets.
-        childNode.attributes = _.assign(
+        childNode.attributes = Object.assign(
+          {},
           this._pageMarginsPresets[this._pageMarginsPresetName],
           this._pageMarginsNode.attributes,
         );
@@ -1037,13 +1044,13 @@ class Sheet {
     }
 
     // Add the merge cells if needed.
-    this._mergeCellsNode.children = _.values(this._mergeCells);
+    this._mergeCellsNode.children = Object.values(this._mergeCells);
     if (this._mergeCellsNode.children.length) {
       xmlq.insertInOrder(node, this._mergeCellsNode, nodeOrder);
     }
 
     // Add the DataValidation cells if needed.
-    this._dataValidationsNode.children = _.values(this._dataValidations);
+    this._dataValidationsNode.children = Object.values(this._dataValidations);
     if (this._dataValidationsNode.children.length) {
       xmlq.insertInOrder(node, this._dataValidationsNode, nodeOrder);
     }
@@ -1298,10 +1305,11 @@ class Sheet {
           "header",
           "footer",
         ];
-        const isValidPresetAttributeKeys = _.isEqual(
-          _.sortBy(pageMarginsAttributeNames),
-          _.sortBy(Object.keys(presetAttributes)),
-        );
+        const expectedKeys = [...pageMarginsAttributeNames].sort();
+        const actualKeys = Object.keys(presetAttributes).sort();
+        const isValidPresetAttributeKeys =
+          expectedKeys.length === actualKeys.length &&
+          expectedKeys.every((key, i) => key === actualKeys[i]);
         if (isValidPresetAttributeKeys === false) {
           throw new Error(
             `Sheet.pageMarginsPreset: Invalid preset attributes for one or key(s)! - "${Object.keys(presetAttributes)}"`,
@@ -1309,17 +1317,16 @@ class Sheet {
         }
 
         // Validate preset attribute values.
-        _.forEach((attributeValue, attributeName) => {
-          const attributeNumberValue = parseFloat(attributeValue);
-          if (
-            _.isNaN(attributeNumberValue) ||
-            _.isNumber(attributeNumberValue) === false
-          ) {
+        Object.entries(presetAttributes).forEach(
+          ([attributeName, attributeValue]) => {
+          const attributeNumberValue = parseFloat(String(attributeValue));
+          if (Number.isNaN(attributeNumberValue)) {
             throw new Error(
               `Sheet.pageMarginsPreset: Invalid preset attribute value! - "${attributeValue}"`,
             );
           }
-        });
+          },
+        );
 
         // Change to new preset
         this._pageMarginsPresetName = presetName;
@@ -1375,7 +1382,7 @@ class Sheet {
     return new ArgHandler("Sheet.pane")
       .case(() => {
         if (paneNode) {
-          const result = _.cloneDeep(paneNode.attributes);
+          const result = structuredClone(paneNode.attributes);
           if (!result.state) result.state = "split";
           return result;
         }
@@ -1385,7 +1392,7 @@ class Sheet {
         return this;
       })
       .case(["object"], (paneAttributes) => {
-        const attributes = _.assign(
+        const attributes = Object.assign(
           { activePane: "bottomRight" },
           paneAttributes,
         );
@@ -1480,7 +1487,7 @@ class Sheet {
    */
   _getCheckAttributeNameHelper(functionName, supportedAttributeNames) {
     return (attributeName) => {
-      if (!_.includes(supportedAttributeNames, attributeName)) {
+      if (!supportedAttributeNames.includes(attributeName)) {
         throw new Error(
           `Sheet.${functionName}: "${attributeName}" is not supported.`,
         );
@@ -1630,7 +1637,7 @@ class Sheet {
 
     // Cache the col nodes.
     this._colNodes = [];
-    _.forEach(this._colsNode.children, (colNode) => {
+    this._colsNode.children.forEach((colNode) => {
       const min = colNode.attributes.min;
       const max = colNode.attributes.max;
       for (let i = min; i <= max; i++) {
@@ -1746,11 +1753,12 @@ class Sheet {
 
       // Search for a preset that matches existing attributes.
       for (const presetName in this._pageMarginsPresets) {
+        const preset = this._pageMarginsPresets[presetName];
+        const presetKeys = Object.keys(preset);
+        const currentAttributes = this._pageMarginsNode.attributes;
         if (
-          _.isEqual(
-            this._pageMarginsNode.attributes,
-            this._pageMarginsPresets[presetName],
-          )
+          Object.keys(currentAttributes).length === presetKeys.length &&
+          presetKeys.every((key) => currentAttributes[key] === preset[key])
         ) {
           this._pageMarginsPresetName = presetName;
           break;

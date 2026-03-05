@@ -1,6 +1,4 @@
 "use strict";
-
-import _ from "lodash";
 import ArgHandler from "./ArgHandler";
 import addressConverter from "./addressConverter";
 import dateConverter from "./dateConverter";
@@ -105,7 +103,7 @@ class Cell {
     delete this._formulaRef;
 
     // TODO in future version: Move shared formula to some other cell. This would require parsing the formula...
-    if (!_.isNil(hostSharedFormulaId))
+    if (hostSharedFormulaId != null)
       this.sheet().clearCellsUsingSharedFormula(hostSharedFormulaId);
 
     return this;
@@ -139,7 +137,7 @@ class Cell {
     const value = this.value();
     if (typeof value !== "string") return false;
 
-    if (_.isNil(replacement)) {
+    if (replacement == null) {
       return pattern.test(value);
     } else {
       const replaced = value.replace(pattern, replacement);
@@ -494,7 +492,7 @@ class Cell {
     // Set the address.
     node.attributes.r = this.address();
 
-    if (!_.isNil(this._formulaType)) {
+    if (this._formulaType != null) {
       // Add the formula.
       const fNode: any = {
         name: "f",
@@ -503,13 +501,13 @@ class Cell {
 
       if (this._formulaType !== "normal")
         fNode.attributes.t = this._formulaType;
-      if (!_.isNil(this._formulaRef)) fNode.attributes.ref = this._formulaRef;
-      if (!_.isNil(this._sharedFormulaId))
+      if (this._formulaRef != null) fNode.attributes.ref = this._formulaRef;
+      if (this._sharedFormulaId != null)
         fNode.attributes.si = this._sharedFormulaId;
-      if (!_.isNil(this._formula)) fNode.children = [this._formula];
+      if (this._formula != null) fNode.children = [this._formula];
 
       node.children.push(fNode);
-    } else if (!_.isNil(this._value)) {
+    } else if (this._value != null) {
       // Add the value. Don't emit value if a formula is set as Excel will show this stale value.
       let type, text;
       if (typeof this._value === "string") {
@@ -540,9 +538,9 @@ class Cell {
     }
 
     // If the style is set, set the style ID.
-    if (!_.isNil(this._style)) {
+    if (this._style != null) {
       node.attributes.s = this._style.id();
-    } else if (!_.isNil(this._styleId)) {
+    } else if (this._styleId != null) {
       node.attributes.s = this._styleId;
     }
 
@@ -564,13 +562,13 @@ class Cell {
    * @private
    */
   _init(nodeOrColumnNumber, styleId) {
-    if (_.isObject(nodeOrColumnNumber)) {
+    if (nodeOrColumnNumber && typeof nodeOrColumnNumber === "object") {
       // Parse the existing node.
       this._parseNode(nodeOrColumnNumber);
     } else {
       // This is a new cell.
       this._columnNumber = nodeOrColumnNumber;
-      if (!_.isNil(styleId)) this._styleId = styleId;
+      if (styleId != null) this._styleId = styleId;
     }
   }
 
@@ -586,7 +584,7 @@ class Cell {
     this._columnNumber = ref.columnNumber;
 
     // Store the style ID if present.
-    if (!_.isNil(node.attributes.s)) this._styleId = node.attributes.s;
+    if (node.attributes.s != null) this._styleId = node.attributes.s;
 
     // Parse the formula if present..
     const fNode = xmlq.findChild(node, "f");
@@ -596,7 +594,7 @@ class Cell {
       this._formula = fNode.children[0];
 
       this._sharedFormulaId = fNode.attributes.si;
-      if (!_.isNil(this._sharedFormulaId)) {
+      if (this._sharedFormulaId != null) {
         // Update the sheet's max shared formula ID so we can set future IDs an index beyond this.
         this.sheet().updateMaxSharedFormulaId(this._sharedFormulaId);
       }
@@ -607,7 +605,7 @@ class Cell {
       delete fNode.attributes.si;
 
       // If any unknown attributes are still present, store them for later output.
-      if (!_.isEmpty(fNode.attributes))
+      if (Object.keys(fNode.attributes).length)
         this._remainingFormulaAttributes = fNode.attributes;
     }
 
@@ -623,7 +621,7 @@ class Cell {
           .getStringByIndex(sharedIndex);
 
         // rich text
-        if (_.isArray(this._value)) {
+        if (Array.isArray(this._value)) {
           this._value = new RichText(this._value);
         }
       } else {
@@ -661,7 +659,7 @@ class Cell {
     delete node.attributes.t;
 
     // If any unknown attributes are still present, store them for later output.
-    if (!_.isEmpty(node.attributes))
+    if (Object.keys(node.attributes).length)
       this._remainingAttributes = node.attributes;
 
     // Delete known children.
@@ -670,7 +668,8 @@ class Cell {
     xmlq.removeChild(node, "is");
 
     // If any unknown children are still present, store them for later output.
-    if (!_.isEmpty(node.children)) this._remainingChildren = node.children;
+    if (node.children && node.children.length)
+      this._remainingChildren = node.children;
   }
 }
 

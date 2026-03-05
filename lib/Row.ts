@@ -1,6 +1,4 @@
 "use strict";
-
-import _ from "lodash";
 import Cell from "./Cell";
 import regexify from "./regexify";
 import ArgHandler from "./ArgHandler";
@@ -69,8 +67,8 @@ class Row {
     const columnStyleId = this.sheet().existingColumnStyleId(columnNumber);
 
     // Row style takes priority. If a cell has both row and column styles it should have created a cell entry with a cell-specific style.
-    if (!_.isNil(rowStyleId)) styleId = rowStyleId;
-    else if (!_.isNil(columnStyleId)) styleId = columnStyleId;
+    if (rowStyleId != null) styleId = rowStyleId;
+    else if (columnStyleId != null) styleId = columnStyleId;
 
     // Create the new cell.
     const cell = new Cell(this, columnNumber, styleId);
@@ -185,7 +183,7 @@ class Row {
         this._createCellStylesIfNeeded();
 
         // Style each existing cell within this row. (Cells don't inherit ow/column styles.)
-        _.forEach(this._cells, (cell) => {
+        this._cells.forEach((cell) => {
           if (cell) cell.style(name, value);
         });
 
@@ -209,7 +207,7 @@ class Row {
         this._createCellStylesIfNeeded();
 
         // Style each existing cell within this row. (Cells don't inherit ow/column styles.)
-        _.forEach(this._cells, (cell) => {
+        this._cells.forEach((cell) => {
           if (cell) cell.style(style);
         });
 
@@ -293,7 +291,7 @@ class Row {
    * @ignore
    */
   hasStyle() {
-    return !_.isNil(this._node.attributes.s);
+    return this._node.attributes.s != null;
   }
 
   /**
@@ -302,7 +300,7 @@ class Row {
    * @ignore
    */
   minUsedColumnNumber() {
-    return _.findIndex(this._cells);
+    return this._cells.findIndex(Boolean);
   }
 
   /**
@@ -334,7 +332,7 @@ class Row {
    */
   _createCellStylesIfNeeded() {
     this.sheet().forEachExistingColumnNumber((columnNumber) => {
-      if (!_.isNil(this.sheet().existingColumnStyleId(columnNumber)))
+      if (this.sheet().existingColumnStyleId(columnNumber) != null)
         this.cell(columnNumber);
     });
   }

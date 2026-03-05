@@ -1,6 +1,4 @@
 "use strict";
-
-import _ from "lodash";
 import xmlq from "./xmlq";
 import Style from "./Style";
 
@@ -79,21 +77,21 @@ class StyleSheet {
     let fontNode, fillNode, borderNode, xfNode;
     if (sourceId >= 0) {
       const sourceXfNode = this._cellXfsNode.children[sourceId];
-      xfNode = _.cloneDeep(sourceXfNode);
+            xfNode = structuredClone(sourceXfNode);
 
       if (sourceXfNode.attributes.applyFont) {
         const fontId = sourceXfNode.attributes.fontId;
-        fontNode = _.cloneDeep(this._fontsNode.children[fontId]);
+                fontNode = structuredClone(this._fontsNode.children[fontId]);
       }
 
       if (sourceXfNode.attributes.applyFill) {
         const fillId = sourceXfNode.attributes.fillId;
-        fillNode = _.cloneDeep(this._fillsNode.children[fillId]);
+                fillNode = structuredClone(this._fillsNode.children[fillId]);
       }
 
       if (sourceXfNode.attributes.applyBorder) {
         const borderId = sourceXfNode.attributes.borderId;
-        borderNode = _.cloneDeep(this._bordersNode.children[borderId]);
+                borderNode = structuredClone(this._bordersNode.children[borderId]);
       }
     }
 
@@ -136,7 +134,7 @@ class StyleSheet {
     this._bordersNode.children.push(borderNode);
 
     if (!xfNode) xfNode = { name: "xf", attributes: {}, children: [] };
-    _.assign(xfNode.attributes, {
+        Object.assign(xfNode.attributes, {
       fontId: this._fontsNode.children.length - 1,
       fillId: this._fillsNode.children.length - 1,
       borderId: this._bordersNode.children.length - 1,

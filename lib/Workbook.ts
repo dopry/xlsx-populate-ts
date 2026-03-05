@@ -1,6 +1,4 @@
 "use strict";
-
-import _ from "lodash";
 import fs from "fs";
 import JSZip from "jszip";
 
@@ -142,7 +140,7 @@ class Workbook {
           throw new Error("You may not activate a hidden sheet.");
 
         // Deselect all sheets except the active one (mirroring ying Excel behavior).
-        _.forEach(this._sheets, (current) => {
+        this._sheets.forEach((current) => {
           current.tabSelected(current === sheet);
         });
 
@@ -198,7 +196,7 @@ class Workbook {
     }
 
     // Make sure we are not deleting the only visible sheet.
-    const visibleSheets = _.filter(this._sheets, (sheet) => !sheet.hidden());
+    const visibleSheets = this._sheets.filter((sheet) => !sheet.hidden());
     if (visibleSheets.length === 1 && visibleSheets[0] === sheet) {
       throw new Error(
         "This sheet may not be deleted as a workbook must contain at least one visible sheet.",
@@ -251,9 +249,9 @@ class Workbook {
     // Get the to/from indexes.
     const from = this._sheets.indexOf(sheet);
     let to;
-    if (_.isNil(indexOrBeforeSheet)) {
+    if (indexOrBeforeSheet == null) {
       to = this._sheets.length - 1;
-    } else if (_.isInteger(indexOrBeforeSheet)) {
+    } else if (Number.isInteger(indexOrBeforeSheet)) {
       to = indexOrBeforeSheet;
     } else {
       if (!(indexOrBeforeSheet instanceof Sheet)) {
@@ -397,8 +395,8 @@ class Workbook {
    * @returns {Sheet|undefined} The sheet or undefined if not found.
    */
   sheet(sheetNameOrIndex) {
-    if (_.isInteger(sheetNameOrIndex)) return this._sheets[sheetNameOrIndex];
-    return _.find(this._sheets, (sheet) => sheet.name() === sheetNameOrIndex);
+    if (Number.isInteger(sheetNameOrIndex)) return this._sheets[sheetNameOrIndex];
+    return this._sheets.find((sheet) => sheet.name() === sheetNameOrIndex);
   }
 
   /**
@@ -507,8 +505,7 @@ class Workbook {
     let definedNamesNode = xmlq.findChild(this._node, "definedNames");
     let definedNameNode =
       definedNamesNode &&
-      _.find(
-        definedNamesNode.children,
+      definedNamesNode.children.find(
         (node) =>
           node.attributes.name === name && node.localSheet === sheetScope,
       );
@@ -616,7 +613,7 @@ class Workbook {
     return this._addSheet(name, indexOrBeforeSheet, () => {
       const cloneXml = (node) => {
         // If the node has a toXml method, call it.
-        if (node && _.isFunction(node.toXml)) node = node.toXml();
+        if (node && typeof node.toXml === "function") node = node.toXml();
 
         if (typeof node === "object") {
           if (node.name) {
@@ -626,9 +623,11 @@ class Workbook {
               children: [],
             };
 
-            _.forOwn(node.attributes, (value, name) => {
-              result.attributes[name] = value;
-            });
+            if (node.attributes && typeof node.attributes === "object") {
+              Object.keys(node.attributes).forEach((name) => {
+                result.attributes[name] = node.attributes[name];
+              });
+            }
 
             let chld;
             if (node.children) {
@@ -667,7 +666,7 @@ class Workbook {
     // Validate the sheet name.
     if (!name || typeof name !== "string")
       throw new Error("Invalid sheet name.");
-    if (_.some(badSheetNameChars, (char) => name.indexOf(char) >= 0))
+    if (badSheetNameChars.some((char) => name.indexOf(char) >= 0))
       throw new Error(
         `Sheet name may not contain any of the following characters: ${badSheetNameChars.join(" ")}`,
       );
@@ -680,9 +679,9 @@ class Workbook {
 
     // Get the destination index of new sheet.
     let index;
-    if (_.isNil(indexOrBeforeSheet)) {
+    if (indexOrBeforeSheet == null) {
       index = this._sheets.length;
-    } else if (_.isInteger(indexOrBeforeSheet)) {
+    } else if (Number.isInteger(indexOrBeforeSheet)) {
       index = indexOrBeforeSheet;
     } else {
       if (!(indexOrBeforeSheet instanceof Sheet)) {
@@ -800,7 +799,7 @@ class Workbook {
         // Load each sheet.
         this._sheetsNode = xmlq.findChild(this._node, "sheets");
         return Promise.all(
-          _.map(this._sheetsNode.children, (sheetIdNode, i) => {
+          this._sheetsNode.children.map((sheetIdNode, i) => {
             if (sheetIdNode.attributes.sheetId > this._maxSheetId)
               this._maxSheetId = sheetIdNode.attributes.sheetId;
 
@@ -833,12 +832,12 @@ class Workbook {
    * @private
    */
   _parseNodesAsync(names) {
-    return Promise.all(_.map(names, (name) => this._zip.file(name)))
+    return Promise.all(names.map((name) => this._zip.file(name)))
       .then((files) =>
-        Promise.all(_.map(files, (file) => file && file.async("string"))),
+        Promise.all(files.map((file) => file && file.async("string"))),
       )
       .then((texts) =>
-        Promise.all(_.map(texts, (text) => text && xmlParser.parseAsync(text))),
+        Promise.all(texts.map((text) => text && xmlParser.parseAsync(text))),
       );
   }
 
@@ -860,7 +859,7 @@ class Workbook {
     // but reordering sheets messes this up. So store it on the node and we'll update the index on XML build.
     const definedNamesNode = xmlq.findChild(this._node, "definedNames");
     if (definedNamesNode) {
-      _.forEach(definedNamesNode.children, (definedNameNode) => {
+      definedNamesNode.children.forEach((definedNameNode) => {
         if (definedNameNode.attributes.hasOwnProperty("localSheetId")) {
           definedNameNode.localSheet =
             this._sheets[definedNameNode.attributes.localSheetId];
@@ -895,7 +894,7 @@ class Workbook {
     // Set the defined names local sheet indexes.
     const definedNamesNode = xmlq.findChild(this._node, "definedNames");
     if (definedNamesNode) {
-      _.forEach(definedNamesNode.children, (definedNameNode) => {
+      definedNamesNode.children.forEach((definedNameNode) => {
         if (definedNameNode.localSheet) {
           definedNameNode.attributes.localSheetId = this._sheets.indexOf(
             definedNameNode.localSheet,

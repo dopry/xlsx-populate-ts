@@ -1,7 +1,5 @@
 "use strict";
 
-import _ from "lodash";
-
 /**
  * The shared strings table.
  * @ignore
@@ -30,7 +28,7 @@ class SharedStrings {
    */
   getIndexForString(string) {
     // If the string is found in the cache, return the index.
-    const key = _.isArray(string) ? JSON.stringify(string) : string;
+    const key = Array.isArray(string) ? JSON.stringify(string) : string;
     let index = this._indexMap[key];
     if (index >= 0) return index;
 
@@ -42,7 +40,7 @@ class SharedStrings {
     // Append a new si node.
     this._node.children.push({
       name: "si",
-      children: _.isArray(string)
+      children: Array.isArray(string)
         ? string
         : [
             {

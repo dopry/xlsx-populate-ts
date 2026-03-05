@@ -1,5 +1,4 @@
 import { describe, it, beforeEach, expect, vi } from "vitest";
-import _ from "lodash";
 import { createSpyObj } from "../helpers/spyObj";
 
 const MockCell = vi.hoisted(() => vi.fn());
@@ -61,7 +60,7 @@ describe("Row", () => {
       columnNumber === 4 ? "STYLE_ID" : undefined,
     );
     sheet.forEachExistingColumnNumber.mockImplementation(
-      (callback: (n: number) => void) => _.forEach([1, 2, 4], callback),
+      (callback: (n: number) => void) => [1, 2, 4].forEach(callback),
     );
 
     rowNode = {

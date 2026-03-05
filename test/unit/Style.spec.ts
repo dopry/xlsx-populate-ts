@@ -1,4 +1,3 @@
-import _ from "lodash";
 import Style from "../../lib/Style";
 import { createSpyObj } from "../helpers/spyObj";
 import { describe, expect, it, beforeEach, vi } from "vitest";
@@ -33,7 +32,7 @@ describe("Style", () => {
         { name: "diagonal", attributes: {}, children: [] },
       ],
     };
-    emptyBorderNode = _.cloneDeep(borderNode);
+    emptyBorderNode = structuredClone(borderNode);
     style = new Style(styleSheet, id, xfNode, fontNode, fillNode, borderNode);
   });
 

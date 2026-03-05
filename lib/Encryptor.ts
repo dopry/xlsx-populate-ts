@@ -8,7 +8,6 @@
  * https://github.com/nolze/ms-offcrypto-tool
  */
 
-import _ from "lodash";
 import cfb from "cfb";
 import crypto from "crypto";
 import XmlParser from "./XmlParser";
@@ -248,12 +247,12 @@ class Encryptor {
   decryptAsync(data, password) {
     // Parse the CFB input and pull out the encryption info and encrypted package entries.
     const parsed = cfb.parse(data);
-    let encryptionInfoBuffer = _.find(parsed.FileIndex, {
-      name: "EncryptionInfo",
-    }).content;
-    let encryptedPackageBuffer = _.find(parsed.FileIndex, {
-      name: "EncryptedPackage",
-    }).content;
+    let encryptionInfoBuffer = parsed.FileIndex.find(
+      (entry) => entry.name === "EncryptionInfo",
+    ).content;
+    let encryptedPackageBuffer = parsed.FileIndex.find(
+      (entry) => entry.name === "EncryptedPackage",
+    ).content;
 
     // In the browser the CFB content is an array. Convert to a Buffer.
     if (!Buffer.isBuffer(encryptionInfoBuffer))

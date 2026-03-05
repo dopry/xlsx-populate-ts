@@ -1,7 +1,5 @@
 "use strict";
 
-import _ from "lodash";
-
 const RELATIONSHIP_SCHEMA_PREFIX =
   "http://schemas.openxmlformats.org/officeDocument/2006/relationships/";
 
@@ -53,7 +51,7 @@ class Relationships {
    * @returns {{}|undefined} The matching relationship or undefined if not found.
    */
   findById(id) {
-    return _.find(this._node.children, (node) => node.attributes.Id === id);
+    return this._node.children.find((node) => node.attributes.Id === id);
   }
 
   /**
@@ -62,8 +60,7 @@ class Relationships {
    * @returns {{}|undefined} The matching relationship or undefined if not found.
    */
   findByType(type) {
-    return _.find(
-      this._node.children,
+    return this._node.children.find(
       (node) => node.attributes.Type === `${RELATIONSHIP_SCHEMA_PREFIX}${type}`,
     );
   }
