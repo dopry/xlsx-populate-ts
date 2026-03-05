@@ -264,7 +264,7 @@ class StyleSheet {
   }
 }
 
-export = StyleSheet;
+export default StyleSheet;
 
 /*
 xl/styles.xml

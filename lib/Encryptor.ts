@@ -678,4 +678,4 @@ class Encryptor {
   }
 }
 
-export = Encryptor;
+export default Encryptor;

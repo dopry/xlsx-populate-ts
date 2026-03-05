@@ -649,4 +649,4 @@ class Style {
 // IE doesn't support function names so explicitly set it.
 if (!Style.name) (Style as any).name = "Style";
 
-export = Style;
+export default Style;

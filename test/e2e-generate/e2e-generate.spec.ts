@@ -23,7 +23,7 @@ describe.skipIf(process.platform !== "win32")("e2e-generate", () => {
   if (!interopPath)
     throw new Error("Unable to find the Microsoft.Office.Interop.Excel.dll!");
 
-  testCases.map((testCase) => {
+  testCases.map((testCase: string | Function) => {
     it(testCase, async () => {
       const { default: edge } = await import("edge-js");
 

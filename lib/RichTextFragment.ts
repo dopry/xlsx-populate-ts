@@ -316,4 +316,4 @@ class RichTextFragment {
 // IE doesn't support function names so explicitly set it.
 if (!RichTextFragment.name) (RichTextFragment as any).name = "RichTextFragment";
 
-export = RichTextFragment;
+export default RichTextFragment;

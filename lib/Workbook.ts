@@ -967,7 +967,7 @@ class Workbook {
 Workbook.MIME_TYPE =
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
-export = Workbook;
+export default Workbook;
 
 /*
 xl/workbook.xml

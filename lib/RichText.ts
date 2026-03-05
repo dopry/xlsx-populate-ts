@@ -6,7 +6,7 @@ import RichTextFragment from "./RichTextFragment";
 /**
  * A RichText class that contains many {@link RichTextFragment}.
  */
-class RichText {
+export class RichText {
   protected _cell: any;
   protected _node: any;
   protected _remainingNodes: any;
@@ -163,4 +163,4 @@ class RichText {
 // IE doesn't support function names so explicitly set it.
 if (!RichText.name) (RichText as any).name = "RichText";
 
-export = RichText;
+export default RichText;

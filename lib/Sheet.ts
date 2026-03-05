@@ -1797,7 +1797,7 @@ class Sheet {
   }
 }
 
-export = Sheet;
+export default Sheet;
 
 /*
 xl/workbook.xml

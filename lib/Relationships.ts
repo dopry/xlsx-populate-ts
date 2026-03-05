@@ -110,7 +110,7 @@ class Relationships {
   }
 }
 
-export = Relationships;
+export default Relationships;
 
 /*
 xl/_rels/workbook.xml.rels

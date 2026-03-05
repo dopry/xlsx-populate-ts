@@ -57,7 +57,7 @@ class ContentTypes {
   }
 }
 
-export = ContentTypes;
+export default ContentTypes;
 
 /*
 [Content_Types].xml

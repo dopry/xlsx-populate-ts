@@ -72,4 +72,4 @@ const colorIndexes = [
   "System Foreground",
   "System Background",
 ];
-export = colorIndexes;
+export default colorIndexes;

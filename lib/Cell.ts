@@ -674,7 +674,7 @@ class Cell {
   }
 }
 
-export = Cell;
+export default Cell;
 
 /*
 <c r="A6" s="1" t="s">

@@ -370,7 +370,7 @@ class Row {
   }
 }
 
-export = Row;
+export default Row;
 
 /*
 <row r="6" spans="1:9" x14ac:dyDescent="0.25">

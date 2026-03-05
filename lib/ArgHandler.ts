@@ -85,4 +85,4 @@ class ArgHandler {
   }
 }
 
-export = ArgHandler;
+export default ArgHandler;

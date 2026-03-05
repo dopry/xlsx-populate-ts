@@ -63,4 +63,4 @@ const dateConverter = {
     return date;
   },
 };
-export = dateConverter;
+export default dateConverter;

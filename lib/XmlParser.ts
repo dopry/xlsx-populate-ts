@@ -86,4 +86,4 @@ class XmlParser {
   }
 }
 
-export = XmlParser;
+export default XmlParser;

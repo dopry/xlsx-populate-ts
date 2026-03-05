@@ -105,4 +105,4 @@ class XmlBuilder {
   }
 }
 
-export = XmlBuilder;
+export default XmlBuilder;

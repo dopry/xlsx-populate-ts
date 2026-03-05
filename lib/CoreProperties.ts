@@ -73,7 +73,7 @@ class CoreProperties {
   }
 }
 
-export = CoreProperties;
+export default CoreProperties;
 
 /*
 docProps/core.xml

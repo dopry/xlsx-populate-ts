@@ -193,4 +193,4 @@ const xmlq = {
     if (child && this.isEmpty(child)) this.removeChild(node, child);
   },
 };
-export = xmlq;
+export default xmlq;

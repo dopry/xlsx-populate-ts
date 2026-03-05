@@ -12,7 +12,7 @@ process.chdir(import.meta.dirname!);
 const testCases = glob.sync("./*/");
 
 describe("e2e-parse", () => {
-  testCases.map((testCase) => {
+  testCases.map((testCase: string | Function) => {
     it(testCase, async () => {
       const passwordFile = `${testCase}password.txt`;
       const password =

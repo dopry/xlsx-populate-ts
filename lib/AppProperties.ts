@@ -46,7 +46,7 @@ class AppProperties {
   }
 }
 
-export = AppProperties;
+export default AppProperties;
 
 /*
 docProps/app.xml

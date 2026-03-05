@@ -18,4 +18,4 @@ const regexify = (pattern: RegExp | string): RegExp => {
   return pattern as RegExp;
 };
 
-export = regexify;
+export default regexify;

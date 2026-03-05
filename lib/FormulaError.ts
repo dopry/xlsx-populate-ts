@@ -89,4 +89,4 @@ FormulaError.getError = (error) => {
   );
 };
 
-export = FormulaError;
+export default FormulaError;

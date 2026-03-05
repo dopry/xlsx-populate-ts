@@ -69,4 +69,4 @@ class PageBreaks {
   }
 }
 
-export = PageBreaks;
+export default PageBreaks;

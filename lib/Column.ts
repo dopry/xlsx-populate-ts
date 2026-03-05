@@ -255,4 +255,4 @@ class Column {
   }
 }
 
-export = Column;
+export default Column;

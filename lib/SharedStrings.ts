@@ -116,7 +116,7 @@ class SharedStrings {
   }
 }
 
-export = SharedStrings;
+export default SharedStrings;
 
 /*
 xl/sharedStrings.xml

@@ -195,4 +195,4 @@ const addressConverter = {
     return address;
   },
 };
-export = addressConverter;
+export default addressConverter;
