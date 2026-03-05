@@ -1,5 +1,5 @@
 {
-    "chat.tools.terminal.autoApprove": {
-        "npx vitest": true
-    }
+  "chat.tools.terminal.autoApprove": {
+    "npx vitest": true
+  }
 }

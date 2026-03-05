@@ -1,46 +1,49 @@
 "use strict";
 
-import _ from "lodash"
-import xmlq from "./xmlq"
-import ArgHandler from "./ArgHandler"
+import _ from "lodash";
+import xmlq from "./xmlq";
+import ArgHandler from "./ArgHandler";
 
 /**
  * App properties
  * @ignore
  */
 class AppProperties {
-    protected _node: any;
+  protected _node: any;
 
-    /**
-     * Creates a new instance of AppProperties
-     * @param {{}} node - The node.
-     */
-    constructor(node) {
-        this._node = node;
-    }
+  /**
+   * Creates a new instance of AppProperties
+   * @param {{}} node - The node.
+   */
+  constructor(node) {
+    this._node = node;
+  }
 
-    isSecure(value) {
-        return new ArgHandler("Range.formula")
-            .case(() => {
-                const docSecurityNode = xmlq.findChild(this._node, "DocSecurity");
-                if (!docSecurityNode) return false;
-                return docSecurityNode.children[0] === 1;
-            })
-            .case('boolean', value => {
-                const docSecurityNode = xmlq.appendChildIfNotFound(this._node, "DocSecurity");
-                docSecurityNode.children = [value ? 1 : 0];
-                return this;
-            })
-            .handle(arguments);
-    }
+  isSecure(value) {
+    return new ArgHandler("Range.formula")
+      .case(() => {
+        const docSecurityNode = xmlq.findChild(this._node, "DocSecurity");
+        if (!docSecurityNode) return false;
+        return docSecurityNode.children[0] === 1;
+      })
+      .case("boolean", (value) => {
+        const docSecurityNode = xmlq.appendChildIfNotFound(
+          this._node,
+          "DocSecurity",
+        );
+        docSecurityNode.children = [value ? 1 : 0];
+        return this;
+      })
+      .handle(arguments);
+  }
 
-    /**
-     * Convert the collection to an XML object.
-     * @returns {{}} The XML.
-     */
-    toXml() {
-        return this._node;
-    }
+  /**
+   * Convert the collection to an XML object.
+   * @returns {{}} The XML.
+   */
+  toXml() {
+    return this._node;
+  }
 }
 
 export = AppProperties;

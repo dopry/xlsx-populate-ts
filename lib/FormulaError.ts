@@ -1,36 +1,36 @@
 "use strict";
 
-import _ from "lodash"
+import _ from "lodash";
 
 /**
  * A formula error (e.g. #DIV/0!).
  */
 class FormulaError {
-    protected _error: any;
-    static DIV0: FormulaError;
-    static NA: FormulaError;
-    static NAME: FormulaError;
-    static NULL: FormulaError;
-    static NUM: FormulaError;
-    static REF: FormulaError;
-    static VALUE: FormulaError;
-    static getError: any;
+  protected _error: any;
+  static DIV0: FormulaError;
+  static NA: FormulaError;
+  static NAME: FormulaError;
+  static NULL: FormulaError;
+  static NUM: FormulaError;
+  static REF: FormulaError;
+  static VALUE: FormulaError;
+  static getError: any;
 
-    // /**
-    //  * Creates a new instance of Formula Error.
-    //  * @param {string} error - The error code.
-    //  */
-    constructor(error) {
-        this._error = error;
-    }
+  // /**
+  //  * Creates a new instance of Formula Error.
+  //  * @param {string} error - The error code.
+  //  */
+  constructor(error) {
+    this._error = error;
+  }
 
-    /**
-     * Get the error code.
-     * @returns {string} The error code.
-     */
-    error() {
-        return this._error;
-    }
+  /**
+   * Get the error code.
+   * @returns {string} The error code.
+   */
+  error() {
+    return this._error;
+  }
 }
 
 /**
@@ -81,10 +81,12 @@ FormulaError.VALUE = new FormulaError("#VALUE!");
  * @returns {FormulaError} The matching FormulaError or a new object if no match.
  * @ignore
  */
-FormulaError.getError = error => {
-    return _.find(FormulaError, value => {
-        return value instanceof FormulaError && value.error() === error;
-    }) || new FormulaError(error);
+FormulaError.getError = (error) => {
+  return (
+    _.find(FormulaError, (value) => {
+      return value instanceof FormulaError && value.error() === error;
+    }) || new FormulaError(error)
+  );
 };
 
 export = FormulaError;

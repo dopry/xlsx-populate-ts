@@ -16,6 +16,7 @@
     "encryption",
     "password"
   ],
+  "type": "module",
   "main": "dist/XlsxPopulate.js",
   "types": "dist/XlsxPopulate.d.ts",
   "files": [
@@ -57,6 +58,7 @@
     "glob": "^7.1.6",
     "jsondiffpatch": "^0.4.1",
     "npm-run-all": "^4.1.5",
+    "prettier": "^3.8.1",
     "semantic-release": "^25.0.3",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"

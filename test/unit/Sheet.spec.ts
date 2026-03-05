@@ -178,9 +178,7 @@ describe("Sheet", () => {
 
     it("should set the active cell by address", () => {
       expect(sheet.activeCell("C6")).toBe(sheet);
-      expect(
-        sheetNode.children[1].children[0].children[0].attributes,
-      ).toEqual({
+      expect(sheetNode.children[1].children[0].children[0].attributes).toEqual({
         activeCell: "ADDRESS",
         sqref: "ADDRESS",
       });
@@ -189,9 +187,7 @@ describe("Sheet", () => {
 
     it("should set the active cell by row and column", () => {
       expect(sheet.activeCell(5, 4)).toBe(sheet);
-      expect(
-        sheetNode.children[1].children[0].children[0].attributes,
-      ).toEqual({
+      expect(sheetNode.children[1].children[0].children[0].attributes).toEqual({
         activeCell: "ADDRESS",
         sqref: "ADDRESS",
       });
@@ -1034,14 +1030,10 @@ describe("Sheet", () => {
         children: [],
       };
       const theError = new RangeError(
-        "Sheet.pageMargins: value too small - value must be greater than or equal to 0."
+        "Sheet.pageMargins: value too small - value must be greater than or equal to 0.",
       );
-      expect(() => sheet.pageMargins("left", -0.123)).toThrowError(
-        theError,
-      );
-      expect(() => sheet.pageMargins("left", "-0.123")).toThrowError(
-        theError,
-      );
+      expect(() => sheet.pageMargins("left", -0.123)).toThrowError(theError);
+      expect(() => sheet.pageMargins("left", "-0.123")).toThrowError(theError);
     });
   });
 

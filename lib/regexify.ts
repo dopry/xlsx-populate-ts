@@ -1,6 +1,6 @@
 "use strict";
 
-import _ from "lodash"
+import _ from "lodash";
 
 /**
  * Convert a pattern to a RegExp.
@@ -9,13 +9,13 @@ import _ from "lodash"
  * @private
  */
 const regexify = (pattern: RegExp | string): RegExp => {
-    if (typeof pattern === "string") {
-        pattern = new RegExp(_.escapeRegExp(pattern), "igm");
-    }
+  if (typeof pattern === "string") {
+    pattern = new RegExp(_.escapeRegExp(pattern), "igm");
+  }
 
-    (pattern as RegExp).lastIndex = 0;
+  (pattern as RegExp).lastIndex = 0;
 
-    return pattern as RegExp;
+  return pattern as RegExp;
 };
 
 export = regexify;

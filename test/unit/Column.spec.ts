@@ -65,8 +65,9 @@ describe("Column", () => {
     sheet.name.mockReturnValue("NAME");
     sheet.workbook.mockReturnValue(workbook);
     sheet.verticalPageBreaks.mockReturnValue(verticalPageBreaks);
-    sheet.forEachExistingRow.mockImplementation((callback: _.ArrayIterator<any, any> | undefined) =>
-      _.forEach(existingRows, callback),
+    sheet.forEachExistingRow.mockImplementation(
+      (callback: _.ArrayIterator<any, any> | undefined) =>
+        _.forEach(existingRows, callback),
     );
 
     columnNode = {

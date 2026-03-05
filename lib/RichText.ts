@@ -1,7 +1,7 @@
 "use strict";
 
-import _ from "lodash"
-import RichTextFragment from "./RichTextFragment"
+import _ from "lodash";
+import RichTextFragment from "./RichTextFragment";
 
 /**
  * A RichText class that contains many {@link RichTextFragment}.

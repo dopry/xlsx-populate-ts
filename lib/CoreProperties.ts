@@ -1,13 +1,13 @@
 "use strict";
 
 const allowedProperties = {
-    title: "dc:title",
-    subject: "dc:subject",
-    author: "dc:creator",
-    creator: "dc:creator",
-    description: "dc:description",
-    keywords: "cp:keywords",
-    category: "cp:category"
+  title: "dc:title",
+  subject: "dc:subject",
+  author: "dc:creator",
+  creator: "dc:creator",
+  description: "dc:description",
+  keywords: "cp:keywords",
+  category: "cp:category",
 };
 
 /**
@@ -15,62 +15,62 @@ const allowedProperties = {
  * @ignore
  */
 class CoreProperties {
-    protected _node: any;
-    protected _properties: any;
+  protected _node: any;
+  protected _properties: any;
 
-    constructor(node) {
-        this._node = node;
-        this._properties = {};
+  constructor(node) {
+    this._node = node;
+    this._properties = {};
+  }
+
+  /**
+   * Sets a specific property.
+   * @param {string} name - The name of the property.
+   * @param {*} value - The value of the property.
+   * @returns {CoreProperties} CoreProperties.
+   */
+  set(name, value) {
+    const key = name.toLowerCase();
+
+    if (typeof allowedProperties[key] === "undefined") {
+      throw new Error(`Unknown property name: "${name}"`);
     }
 
-    /**
-     * Sets a specific property.
-     * @param {string} name - The name of the property.
-     * @param {*} value - The value of the property.
-     * @returns {CoreProperties} CoreProperties.
-     */
-    set(name, value) {
-        const key = name.toLowerCase();
+    this._properties[key] = value;
 
-        if (typeof allowedProperties[key] === "undefined") {
-            throw new Error(`Unknown property name: "${name}"`);
-        }
+    return this;
+  }
 
-        this._properties[key] = value;
+  /**
+   * Get a specific property.
+   * @param {string} name - The name of the property.
+   * @returns {*} The property value.
+   */
+  get(name) {
+    const key = name.toLowerCase();
 
-        return this;
+    if (typeof allowedProperties[key] === "undefined") {
+      throw new Error(`Unknown property name: "${name}"`);
     }
 
-    /**
-     * Get a specific property.
-     * @param {string} name - The name of the property.
-     * @returns {*} The property value.
-     */
-    get(name) {
-        const key = name.toLowerCase();
+    return this._properties[key];
+  }
 
-        if (typeof allowedProperties[key] === "undefined") {
-            throw new Error(`Unknown property name: "${name}"`);
-        }
-
-        return this._properties[key];
+  /**
+   * Convert the collection to an XML object.
+   * @returns {{}} The XML.
+   */
+  toXml() {
+    for (const key in this._properties) {
+      if (!this._properties.hasOwnProperty(key)) continue;
+      this._node.children.push({
+        name: allowedProperties[key],
+        children: [this._properties[key]],
+      });
     }
 
-    /**
-     * Convert the collection to an XML object.
-     * @returns {{}} The XML.
-     */
-    toXml() {
-        for (const key in this._properties) {
-            if (!this._properties.hasOwnProperty(key)) continue;
-            this._node.children.push({
-                name: allowedProperties[key],
-                children: [this._properties[key]]
-            });
-        }
-
-        return this._node;
-    }
+    return this._node;
+  }
 }
 
 export = CoreProperties;
