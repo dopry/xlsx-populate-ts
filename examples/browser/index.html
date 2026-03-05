@@ -77,8 +77,9 @@
       </button>
     </div>
 
-    <script type="text/javascript" src="../../dist/XlsxPopulate.js"></script>
-    <script type="text/javascript">
+    <script type="module">
+      import XlsxPopulate from "../../dist/XlsxPopulate.js";
+
       // Promise is not defined in IE so xlsx-populate uses a polyfill via JSZip.
       var Promise = XlsxPopulate.Promise;
 
@@ -164,6 +165,9 @@
             throw err;
           });
       }
+
+      window.generateBlob = generateBlob;
+      window.generateBase64 = generateBase64;
     </script>
   </body>
 </html>

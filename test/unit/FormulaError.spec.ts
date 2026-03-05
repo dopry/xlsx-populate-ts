@@ -1,4 +1,5 @@
 import FormulaError from "../../lib/FormulaError";
+import { describe, expect, it } from "vitest";
 
 describe("FormulaError", () => {
   describe("error", () => {

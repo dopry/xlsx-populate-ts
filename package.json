@@ -18,14 +18,27 @@
   ],
   "type": "module",
   "main": "dist/XlsxPopulate.js",
+  "exports": {
+    ".": {
+      "types": "./dist/XlsxPopulate.d.ts",
+      "browser": "./dist/XlsxPopulate.js",
+      "node": "./dist/XlsxPopulate.js",
+      "import": "./dist/XlsxPopulate.js",
+      "default": "./dist/XlsxPopulate.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "browser": {
+    "fs": false
+  },
   "types": "dist/XlsxPopulate.d.ts",
   "files": [
     "dist/"
   ],
   "scripts": {
     "build": "tsc",
-    "test": "vitest run --project unit",
-    "test:watch": "vitest --project unit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepublishOnly": "npm run build"
   },
   "author": "Dave T. Johnson <dave@dtjohnson.net>",
@@ -42,9 +55,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dopry/xlsx-populate.git"
+    "url": "https://github.com/dopry/xlsx-populate-ts.git"
   },
-  "bugs": "https://github.com/dopry/xlsx-populate/issues",
+  "bugs": "https://github.com/dopry/xlsx-populate-ts/issues",
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",

@@ -42,7 +42,7 @@ describe("Encryptor", () => {
       };
 
       const output = encryptor._buildEncryptionInfo(input);
-      expect(output.slice(0, 8)).toEqualUInt8Array(
+      expect(output.slice(0, 8)).toEqual(
         Buffer.from([0x04, 0x00, 0x04, 0x00, 0x40, 0x00, 0x00, 0x00]),
       );
       expect(output.slice(8).toString()).toBe(
@@ -142,7 +142,7 @@ describe("Encryptor", () => {
         iv,
         plainText,
       );
-      expect(output).toEqualUInt8Array(cipherText);
+      expect(output).toEqual(cipherText);
     });
 
     it("should decrypt the data", () => {
@@ -154,19 +154,19 @@ describe("Encryptor", () => {
         iv,
         cipherText,
       );
-      expect(output).toEqualUInt8Array(plainText);
+      expect(output).toEqual(plainText);
     });
   });
 
   describe("_createUInt32LEBuffer", () => {
     it("should create a 4 byte buffer by default", () => {
       const output = encryptor._createUInt32LEBuffer(1234);
-      expect(output).toEqualUInt8Array(Buffer.from([210, 4, 0, 0]));
+      expect(output).toEqual(Buffer.from([210, 4, 0, 0]));
     });
 
     it("should create a buffer of given length", () => {
       const output = encryptor._createUInt32LEBuffer(4321, 7);
-      expect(output).toEqualUInt8Array(Buffer.from([225, 16, 0, 0, 0, 0, 0]));
+      expect(output).toEqual(Buffer.from([225, 16, 0, 0, 0, 0, 0]));
     });
   });
 });

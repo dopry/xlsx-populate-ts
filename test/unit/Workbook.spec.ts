@@ -760,7 +760,8 @@ describe("Workbook", () => {
     describe("_initAsync", () => {
       beforeEach(() => {
         vi.spyOn(workbook, "_parseNodesAsync").mockImplementation(
-          (files: string[]) => {
+          (...args: unknown[]) => {
+            const files = args[0] as string[];
             return Promise.all(
               _.map(files, (file: string) => {
                 if (file === "xl/workbook.xml") return resolved(workbookNode);

@@ -66,7 +66,7 @@ To populate data in a workbook, you first load one (either blank, from data, or 
 cells within the workbook to manipulate them.
 
 ```js
-const XlsxPopulate = require("xlsx-populate");
+import XlsxPopulate from "@dopry/xlsx-populate-ts";
 
 // Load a new blank workbook
 XlsxPopulate.fromBlankAsync().then((workbook) => {
@@ -83,7 +83,7 @@ XlsxPopulate.fromBlankAsync().then((workbook) => {
 You can pull data out of existing workbooks using [Cell.value](#Cell+value) as a getter without any arguments:
 
 ```js
-const XlsxPopulate = require("xlsx-populate");
+import XlsxPopulate from "@dopry/xlsx-populate-ts";
 
 // Load an existing workbook
 XlsxPopulate.fromFileAsync("./Book1.xlsx").then((workbook) => {
@@ -420,7 +420,8 @@ You can read and modify rich texts on an existing rich text cell:
 
 ```js
 // assume A1 is a rich text cell
-const RichText = require("xlsx-Populate").RichText;
+import XlsxPopulate from "@dopry/xlsx-populate-ts";
+const { RichText } = XlsxPopulate;
 const cell = workbook.sheet(0).cell("A1");
 cell.value() instanceof RichText; // returns true
 const richtext = cell.value();
@@ -454,7 +455,8 @@ richtext.clear();
 How to set a cell to rich texts:
 
 ```js
-const RichText = require("xlsx-Populate").RichText;
+import XlsxPopulate from "@dopry/xlsx-populate-ts";
+const { RichText } = XlsxPopulate;
 const cell = workbook.sheet(0).cell("A1");
 // set a cell value to rich text
 cell.value(new RichText());
@@ -784,9 +786,11 @@ router.get("/download", function (req, res, next) {
 
 ### Browser Usage
 
-Usage in the browser is almost the same. A functional example can be found in [examples/browser/index.html](https://gitcdn.xyz/repo/dtjohnson/xlsx-populate/master/examples/browser/index.html). The library is exposed globally as `XlsxPopulate`. Existing workbooks can be loaded from a file:
+Usage in the browser is almost the same. A functional example can be found in [examples/browser/index.html](https://gitcdn.xyz/repo/dtjohnson/xlsx-populate/master/examples/browser/index.html). With modern browsers, prefer ESM imports:
 
 ```js
+import XlsxPopulate from "@dopry/xlsx-populate-ts";
+
 // Assuming there is a file input in the page with the id 'file-input'
 var file = document.getElementById("file-input").files[0];
 
@@ -854,8 +858,8 @@ var Promise = XlsxPopulate.Promise;
 If you prefer, you can override the default `Promise` library used with another ES6 compliant library like [bluebird](http://bluebirdjs.com/).
 
 ```js
-const Promise = require("bluebird");
-const XlsxPopulate = require("xlsx-populate");
+import Promise from "bluebird";
+import XlsxPopulate from "@dopry/xlsx-populate-ts";
 XlsxPopulate.Promise = Promise;
 ```
 
