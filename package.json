@@ -1,7 +1,7 @@
 {
-  "name": "xlsx-populate",
-  "version": "1.21.0",
-  "description": "Excel XLSX parser/generator written in JavaScript with Node.js and browser support, jQuery/d3-style method chaining, and a focus on keeping existing workbook features and styles in tact.",
+  "name": "@dopry/xlsx-populate-ts",
+  "version": "0.0.0-semantic-release",
+  "description": "Excel XLSX parser/generator written in TypeScript with Node.js and browser support, jQuery/d3-style method chaining, and a focus on keeping existing workbook features and styles intact.",
   "keywords": [
     "excel",
     "workbook",
@@ -16,16 +16,30 @@
     "encryption",
     "password"
   ],
-  "main": "lib/XlsxPopulate.js",
-  "browser": {
-    "XlsxPopulate": "./browser/xlsx-populate.js"
+  "type": "module",
+  "main": "dist/XlsxPopulate.js",
+  "exports": {
+    ".": {
+      "types": "./dist/XlsxPopulate.d.ts",
+      "browser": "./dist/XlsxPopulate.js",
+      "node": "./dist/XlsxPopulate.js",
+      "import": "./dist/XlsxPopulate.js",
+      "default": "./dist/XlsxPopulate.js"
+    },
+    "./package.json": "./package.json"
   },
+  "browser": {
+    "fs": false
+  },
+  "types": "dist/XlsxPopulate.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
-    "test": "jasmine JASMINE_CONFIG_PATH=test/unit/jasmine.json",
-    "e2e-generate": "jasmine JASMINE_CONFIG_PATH=test/e2e-generate/jasmine.json",
-    "e2e-parse": "jasmine JASMINE_CONFIG_PATH=test/e2e-parse/jasmine.json",
-    "test:windows": "npm-run-all test e2e-parse e2e-generate",
-    "docs": "gulp docs"
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
   },
   "author": "Dave T. Johnson <dave@dtjohnson.net>",
   "contributors": [
@@ -36,45 +50,27 @@
   "dependencies": {
     "cfb": "^1.1.3",
     "jszip": "^3.2.2",
-    "lodash": "^4.17.15",
     "sax": "^1.2.4"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dtjohnson/xlsx-populate.git"
+    "url": "https://github.com/dopry/xlsx-populate-ts.git"
   },
-  "bugs": "https://github.com/dtjohnson/xlsx-populate/issues",
+  "bugs": "https://github.com/dopry/xlsx-populate-ts/issues",
   "devDependencies": {
-    "@babel/core": "^7.8.6",
-    "@babel/preset-env": "^7.8.6",
-    "babelify": "^10.0.0",
-    "browserify": "^16.5.0",
-    "edge-js": "^13.0.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.6",
+    "@semantic-release/npm": "^13.1.5",
+    "@types/node": "^25.3.3",
+    "@types/sax": "^1.2.7",
+    "@vitest/coverage-v8": "^4.0.18",
+    "edge-js": "^25.0.1",
     "glob": "^7.1.6",
-    "gulp": "^4.0.2",
-    "gulp-eslint": "^6.0.0",
-    "gulp-rename": "^2.0.0",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-uglify": "^3.0.2",
-    "jasmine": "^3.5.0",
-    "jsdoc-to-markdown": "^5.0.3",
     "jsondiffpatch": "^0.4.1",
-    "karma": "^4.4.1",
-    "karma-browserify": "^7.0.0",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-firefox-launcher": "^1.3.0",
-    "karma-ie-launcher": "^1.0.0",
-    "karma-jasmine": "^3.1.1",
-    "markdown-include": "^0.4.3",
-    "markdown-toc": "^1.2.0",
-    "npm-run-all": "^4.1.5",
-    "proxyquire": "^2.1.3",
-    "proxyquire-universal": "^2.1.0",
-    "proxyquireify": "^3.2.1",
-    "replacestream": "^4.0.3",
-    "uglify-js": "^3.8.0",
-    "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0",
-    "watchify": "^3.11.1"
+    "prettier": "^3.8.1",
+    "semantic-release": "^25.0.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   }
 }

@@ -75,11 +75,7 @@
       "width": 141
     }
   },
-  "mergeCells": [
-    "A2:B2",
-    "A4:A5",
-    "A7:B8"
-  ],
+  "mergeCells": ["A2:B2", "A4:A5", "A7:B8"],
   "formulas": {
     "normal": {
       "value": true,

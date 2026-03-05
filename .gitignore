@@ -28,3 +28,8 @@ node_modules
 .lock-wscript
 
 .idea
+
+# TypeScript build output
+dist
+
+/test/e2e-generate/encrypted/out.xlsx
